@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class SignInActivity extends AppCompatActivity {
 
     private static final String TAG = "SignInActivity";
+    private static final String TOAST_MESSAGE_NULL_EDIT_TEXT = "Заполните данные поля";
 
     FirebaseAuth firebaseAuth;
 
@@ -49,7 +50,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void findView(){
-        editTextEmail = findViewById(R.id.editTextMessage);
+        editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextNickName = findViewById(R.id.editTextNickName);
         buttonSignUp = findViewById(R.id.buttonSignUp);
@@ -61,18 +62,31 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Pair<String , String> pairEditTextResult;
-                if((pairEditTextResult = checkingValuesEditTexts()) != null){
-                    loginSignUpUser(pairEditTextResult.first , pairEditTextResult.second);
+                try{
+                    if((pairEditTextResult = checkingValuesEditTexts()) != null){
+                        loginSignUpUser(pairEditTextResult.first , pairEditTextResult.second);
+                    }
+                }catch (NoInfoFromEditTextException e){
+                    Toast.makeText(SignInActivity.this, TOAST_MESSAGE_NULL_EDIT_TEXT
+                            , Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-    private Pair<String , String> checkingValuesEditTexts(){
-        String
+    private Pair<String , String> checkingValuesEditTexts() throws NoInfoFromEditTextException {
+        String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
+
+        if(!email.equals("") && !password.equals("")){
+            return new Pair<String , String>(email , password);
+        }else{
+            throw  new NoInfoFromEditTextException();
+        }
     }
 
     private void loginSignUpUser(String email , String password) {
+        // метод отвечает за добавление пользоватеоя в Firebase
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -80,7 +94,10 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
+                            // добавление пользователя
                             FirebaseUser user = firebaseAuth.getCurrentUser();
+                            Toast.makeText(SignInActivity.this,
+                                    "Authentication complete", Toast.LENGTH_SHORT).show();
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
