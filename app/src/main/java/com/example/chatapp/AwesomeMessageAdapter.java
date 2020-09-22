@@ -46,6 +46,7 @@ public class AwesomeMessageAdapter extends ArrayAdapter<AwesomeMessage> {
     private void inflateMessage(AwesomeMessage message){
         if (isText) {
             textViewText.setVisibility(View.VISIBLE);
+            textViewText.setText(message.getText());
             imageViewPhoto.setVisibility(View.GONE);
         } else {
             textViewText.setVisibility(View.GONE);

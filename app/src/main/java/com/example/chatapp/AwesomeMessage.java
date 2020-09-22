@@ -2,9 +2,9 @@ package com.example.chatapp;
 
 public class AwesomeMessage {
 
-    String text;
-    String name;
-    String imageUrl;
+    private String text;
+    private String name;
+    private String imageUrl;
 
     public AwesomeMessage(String text, String name, String imageUrl) {
         this.text = text;

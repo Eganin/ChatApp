@@ -1,5 +1,7 @@
 package com.example.chatapp;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -13,6 +15,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -35,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseDatabase database;
     DatabaseReference messagesDatabaseReference;
+    ChildEventListener messagesChildEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         handlerEditText();
         handlerButtonSendMessage();
         handlerImageButtonSendPhoto();
+        handlerChildEventListener();
     }
 
     private void findView() {
@@ -62,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         List<AwesomeMessage> awesomeMessages = new ArrayList<AwesomeMessage>();
         listView = findViewById(R.id.listView);
-        adapter = new AwesomeMessageAdapter(getApplicationContext(), R.layout.message_item,
+        adapter = new AwesomeMessageAdapter(this, R.layout.message_item,
                 awesomeMessages);
 
         listView.setAdapter(adapter);
@@ -84,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 AwesomeMessage message = new AwesomeMessage();
                 message.setText(editTextMessage.getText().toString());
+                System.out.println(editTextMessage.getText().toString());
                 message.setName(userName);
                 message.setImageUrl(null);
 
@@ -117,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // ограничиваем ввдимость символов
+        // ограничиваем вводимость символов
         editTextMessage.setFilters(new InputFilter[]{
                 new InputFilter.LengthFilter(MAX_LENGTH_MESSAGE)
         });
@@ -130,5 +138,50 @@ public class MainActivity extends AppCompatActivity {
         // ссылка на новый узел БД
         messagesDatabaseReference = database.getReference().child("messages");
 
+    }
+
+    private void handlerChildEventListener(){
+        // обработчик изменений в базе данных
+        messagesChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot,
+                                     @Nullable String previousChildName) {
+                // срабатывает при добавлении элемента
+                AwesomeMessage message = snapshot.getValue(AwesomeMessage.class);
+                System.out.println(message.getText().toString());
+                adapter.add(message);
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot,
+                                       @Nullable String previousChildName) {
+                // срабатывает при  изменении элемента
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                // срабатывает при  удалении элемента
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot,
+                                     @Nullable String previousChildName) {
+                // срабатываеи при перемещении элемента
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // ошибка размещения элемента
+
+            }
+        };
+
+        // добавляем к базе listener
+        messagesDatabaseReference.addChildEventListener(messagesChildEventListener);
     }
 }
