@@ -67,8 +67,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Pair<String, String> pairEditTextResult;
                 try {
-                    if (((pairEditTextResult = checkingValuesEditTexts()) != null)
-                            ||(!loginModeActive)) {
+                    if ((pairEditTextResult = checkingValuesEditTexts()) != null) {
                         loginSignUpUser(pairEditTextResult.first, pairEditTextResult.second);
                     }
                 } catch (NoInfoFromEditTextException e) {
@@ -85,7 +84,7 @@ public class SignInActivity extends AppCompatActivity {
         String repeatPassword = editTextPasswordRepeat.getText().toString().trim();
 
         if ((!email.equals("") && !password.equals("") && repeatPassword.equals(password))
-                ||(!loginModeActive)) {
+                ||(loginModeActive)) {
             return new Pair<String, String>(email, password);
         } else {
             throw new NoInfoFromEditTextException();
