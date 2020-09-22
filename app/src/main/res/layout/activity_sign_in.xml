@@ -11,8 +11,16 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
         android:background="@drawable/ic_baseline_message_24" />
+
+    <EditText
+        android:id="@+id/editTextNickName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="40dp"
+        android:hint="Your NickName" />
 
     <EditText
         android:id="@+id/editTextEmail"
@@ -21,43 +29,46 @@
         android:layout_marginLeft="40dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="40dp"
-        android:hint="Your Email"/>
+        android:hint="Your Email" />
 
     <EditText
         android:id="@+id/editTextPassword"
-        android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="40dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="40dp"
-        android:hint="Your password"/>
+        android:hint="Your password"
+        android:inputType="textPassword" />
 
     <EditText
-        android:id="@+id/editTextNickName"
+        android:id="@+id/editTextPasswordRepeat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="40dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="40dp"
-        android:hint="Your NickName"/>
+        android:hint="Confirm your password password"
+        android:inputType="textPassword" />
+
 
     <Button
         android:id="@+id/buttonSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        android:text="Sign Up"/>
+        android:layout_marginTop="30dp"
+        android:text="Sign Up" />
 
     <TextView
         android:id="@+id/toggleLoginSignUpTextView"
-        android:text="Tap to Log In"
-        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:textSize="16dp"
-        android:clickable="true"/>
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:clickable="true"
+        android:onClick="toggleLoginMode"
+        android:text="Tap to Log In"
+        android:textSize="16dp" />
 
 </LinearLayout>
