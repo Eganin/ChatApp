@@ -40,9 +40,9 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        findView();
         firebaseAuth = FirebaseAuth.getInstance();
-
+        checkCurrentUser();
+        findView();
         buttonHandler();
     }
 
@@ -84,7 +84,7 @@ public class SignInActivity extends AppCompatActivity {
         String repeatPassword = editTextPasswordRepeat.getText().toString().trim();
 
         if ((!email.equals("") && !password.equals("") && repeatPassword.equals(password))
-                ||(loginModeActive)) {
+                || (loginModeActive)) {
             return new Pair<String, String>(email, password);
         } else {
             throw new NoInfoFromEditTextException();
@@ -93,9 +93,9 @@ public class SignInActivity extends AppCompatActivity {
 
     private void loginSignUpUser(String email, String password) {
         // метод отвечает за добавление пользователя в Firebase
-        if(loginModeActive){
+        if (loginModeActive) {
             loginOrSignUpUser(firebaseAuth.signInWithEmailAndPassword(email, password));
-        }else{
+        } else {
             loginOrSignUpUser(firebaseAuth.createUserWithEmailAndPassword(email, password));
         }
     }
@@ -116,7 +116,7 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    private void loginOrSignUpUser(Task<AuthResult> firebaseAuthMethod){
+    private void loginOrSignUpUser(Task<AuthResult> firebaseAuthMethod) {
         // метод отвечает за добавление пользователя в Firebase
         firebaseAuthMethod.addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -140,5 +140,12 @@ public class SignInActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void checkCurrentUser() {
+        // метод уже залогининных пользователей отправляет в MainActivity
+        if (firebaseAuth.getCurrentUser() != null) {
+            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+        }
     }
 }
