@@ -29,6 +29,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.chatapp.ContactException.IntentKeys.*;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String CLEAR_EDIT_TEXT = "";
@@ -41,11 +43,14 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonSendMessage;
     private EditText editTextMessage;
 
-    private String userName;
+    public static String userName;
 
     FirebaseDatabase database;
     DatabaseReference messagesDatabaseReference;
     ChildEventListener messagesChildEventListener;
+
+    DatabaseReference usersDatabaseReference;
+    ChildEventListener usersChildEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initFareBaseDB();
+        getDataFromSignInActivity();
         findView();
         handlerEditText();
         handlerButtonSendMessage();
@@ -71,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initListView() {
-        userName = "Default";
 
         List<AwesomeMessage> awesomeMessages = new ArrayList<AwesomeMessage>();
         adapter = new AwesomeMessageAdapter(this, R.layout.message_item,
@@ -142,6 +147,16 @@ public class MainActivity extends AppCompatActivity {
         // ссылка на узел БД
         messagesDatabaseReference = database.getReference().child("messages");
 
+    }
+
+    private void getDataFromSignInActivity(){
+        Intent currentIntent = getIntent();
+        if(currentIntent != null){
+            userName = currentIntent.getStringExtra(NICKNAME);
+            System.out.println(userName);
+        }else {
+            userName = "Default User";
+        }
     }
 
     private void handlerChildEventListener() {

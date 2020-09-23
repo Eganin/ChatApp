@@ -18,13 +18,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import static com.example.chatapp.ContactException.IntentKeys.*;
 
 public class SignInActivity extends AppCompatActivity {
 
     private static final String TAG = "SignInActivity";
-    private static final String TOAST_MESSAGE_NULL_EDIT_TEXT = "Заполните данные поля";
 
     FirebaseAuth firebaseAuth;
+    FirebaseDatabase database;
+    DatabaseReference usersDatabaseReference;
+
 
     private EditText editTextEmail;
     private EditText editTextPassword;
@@ -33,14 +39,17 @@ public class SignInActivity extends AppCompatActivity {
     private Button buttonSignUp;
     private TextView toggleLoginSignUpTextView;
 
+    private String nickName;
+
     private boolean loginModeActive;
+    private boolean isNewUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        firebaseAuth = FirebaseAuth.getInstance();// get instance db
+        initDB();
         checkCurrentUser();
         findView();
         buttonHandler();
@@ -75,7 +84,7 @@ public class SignInActivity extends AppCompatActivity {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         String repeatPassword = editTextPasswordRepeat.getText().toString().trim();
-        String nickName = editTextNickName.getText().toString().trim();
+         nickName = editTextNickName.getText().toString().trim();
 
         if (loginModeActive) {
             if (email.equals("")) {
@@ -98,6 +107,9 @@ public class SignInActivity extends AppCompatActivity {
         if (password.equals("")) {
             throw new NoInfoFromEditTextException(ContactException.Exception.NOT_FOUND_PASSWORD);
         }
+        if (password.length() <= 6) {
+            throw new NoInfoFromEditTextException(ContactException.Exception.LENGTH_PASSWORD);
+        }
         if (repeatPassword.equals("")) {
             throw new NoInfoFromEditTextException(ContactException.Exception.NOT_FOUND_REPEAT_PASSWORD);
         }
@@ -112,10 +124,12 @@ public class SignInActivity extends AppCompatActivity {
         // метод отвечает за добавление пользователя в Firebase
         if (loginModeActive) {
             // вызываем метод для проверки и входа пользователя
-            loginOrSignUpUser(firebaseAuth.signInWithEmailAndPassword(email, password));
+            isNewUser = false;
+            loginOrSignUpUser(firebaseAuth.signInWithEmailAndPassword(email, password),isNewUser);
         } else {
             // вызываем метод для регистрации пользователя
-            loginOrSignUpUser(firebaseAuth.createUserWithEmailAndPassword(email, password));
+            isNewUser = true;
+            loginOrSignUpUser(firebaseAuth.createUserWithEmailAndPassword(email, password),isNewUser);
         }
     }
 
@@ -125,17 +139,15 @@ public class SignInActivity extends AppCompatActivity {
             buttonSignUp.setText("Sign Up");
             toggleLoginSignUpTextView.setText("Tap to Log In");
             editTextPasswordRepeat.setVisibility(View.VISIBLE);
-            editTextNickName.setVisibility(View.VISIBLE);
         } else {
             loginModeActive = true;
             buttonSignUp.setText("Log In");
             toggleLoginSignUpTextView.setText("Tap to Sign Up");
             editTextPasswordRepeat.setVisibility(View.GONE);
-            editTextNickName.setVisibility(View.GONE);
         }
     }
 
-    private void loginOrSignUpUser(Task<AuthResult> firebaseAuthMethod) {
+    private void loginOrSignUpUser(final Task<AuthResult> firebaseAuthMethod, final boolean isNewUser) {
         // метод отвечает за добавление пользователя или входа в Firebase
         firebaseAuthMethod.addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -143,20 +155,27 @@ public class SignInActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     // добавление пользователя
                     FirebaseUser user = firebaseAuth.getCurrentUser();// получение текущего пользователя
+                    if(isNewUser){
+                        // если мы регистрируем пользователя
+                        createUser(user);
+                    }
                     Toast.makeText(SignInActivity.this,
                             "Authentication complete", Toast.LENGTH_LONG).show();
-                    //updateUI(user);
-                    startActivity(new Intent(SignInActivity.this,
-                            MainActivity.class));
+                    startIntent();
                 } else {
-                    // если не удалось войти тлт зарегистртроваться
+                    // если не удалось войти или зарегистртроваться
                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
                     Toast.makeText(SignInActivity.this, "Authentication failed.",
                             Toast.LENGTH_LONG).show();
-                    //updateUI(null);
                 }
             }
         });
+    }
+
+    private void startIntent(){
+        Intent intent = new Intent(SignInActivity.this , MainActivity.class);
+        intent.putExtra(NICKNAME,nickName);
+        startActivity(intent);
     }
 
     private void checkCurrentUser() {
@@ -169,5 +188,24 @@ public class SignInActivity extends AppCompatActivity {
     private void handlerException(NoInfoFromEditTextException exception) {
         Toast.makeText(SignInActivity.this, exception.getMessageException()
                 , Toast.LENGTH_LONG).show();
+    }
+
+    private void createUser(FirebaseUser firebaseUser){
+        User user = new User();
+        // вставляем id пользователя
+        user.setId(firebaseUser.getUid());
+        // вставляем Email пользователя
+        user.setEmail(firebaseUser.getEmail());
+        // вставляем nickname пользователя
+        user.setName(editTextNickName.getText().toString());
+
+        //отправляем класс в базу
+        usersDatabaseReference.push().setValue(user);
+    }
+
+    private void initDB(){
+        firebaseAuth = FirebaseAuth.getInstance();// get instance db
+        database = FirebaseDatabase.getInstance();
+        usersDatabaseReference = database.getReference().child("users");
     }
 }

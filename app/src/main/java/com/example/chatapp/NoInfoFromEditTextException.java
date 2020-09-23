@@ -2,7 +2,7 @@ package com.example.chatapp;
 
 public class NoInfoFromEditTextException extends Exception {
 
-    public String messageException;
+    private String messageException;
 
     public NoInfoFromEditTextException(String messageException) {
         this.messageException = messageException;
