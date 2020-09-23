@@ -40,16 +40,10 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();// get instance db
         checkCurrentUser();
         findView();
         buttonHandler();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
     }
 
     private void findView() {
@@ -71,8 +65,7 @@ public class SignInActivity extends AppCompatActivity {
                         loginSignUpUser(pairEditTextResult.first, pairEditTextResult.second);
                     }
                 } catch (NoInfoFromEditTextException e) {
-                    Toast.makeText(SignInActivity.this, TOAST_MESSAGE_NULL_EDIT_TEXT
-                            , Toast.LENGTH_LONG).show();
+                    handlerException(e);
                 }
             }
         });
@@ -82,20 +75,46 @@ public class SignInActivity extends AppCompatActivity {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         String repeatPassword = editTextPasswordRepeat.getText().toString().trim();
+        String nickName = editTextNickName.getText().toString().trim();
 
-        if ((!email.equals("") && !password.equals("") && repeatPassword.equals(password))
-                || (loginModeActive)) {
+        if (loginModeActive) {
+            if (email.equals("")) {
+                throw new NoInfoFromEditTextException(ContactException.Exception.NOT_FOUND_EMAIL);
+            }
+            if (password.equals("")) {
+                throw new NoInfoFromEditTextException(ContactException.Exception.NOT_FOUND_PASSWORD);
+            }
             return new Pair<String, String>(email, password);
+        }
+        if (!email.equals("") && !password.equals("") && repeatPassword.equals(password)) {
+            return new Pair<String, String>(email, password);
+        }
+        if (nickName.equals("")) {
+            throw new NoInfoFromEditTextException(ContactException.Exception.NOT_FOUND_NICKNAME);
+        }
+        if (email.equals("")) {
+            throw new NoInfoFromEditTextException(ContactException.Exception.NOT_FOUND_EMAIL);
+        }
+        if (password.equals("")) {
+            throw new NoInfoFromEditTextException(ContactException.Exception.NOT_FOUND_PASSWORD);
+        }
+        if (repeatPassword.equals("")) {
+            throw new NoInfoFromEditTextException(ContactException.Exception.NOT_FOUND_REPEAT_PASSWORD);
+        }
+        if (!repeatPassword.equals(password)) {
+            throw new NoInfoFromEditTextException(ContactException.Exception.PASSWORD_DONT_MATCH);
         } else {
-            throw new NoInfoFromEditTextException();
+            throw new NoInfoFromEditTextException(ContactException.Exception.UNKNOWN);
         }
     }
 
     private void loginSignUpUser(String email, String password) {
         // метод отвечает за добавление пользователя в Firebase
         if (loginModeActive) {
+            // вызываем метод для проверки и входа пользователя
             loginOrSignUpUser(firebaseAuth.signInWithEmailAndPassword(email, password));
         } else {
+            // вызываем метод для регистрации пользователя
             loginOrSignUpUser(firebaseAuth.createUserWithEmailAndPassword(email, password));
         }
     }
@@ -117,22 +136,20 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void loginOrSignUpUser(Task<AuthResult> firebaseAuthMethod) {
-        // метод отвечает за добавление пользователя в Firebase
+        // метод отвечает за добавление пользователя или входа в Firebase
         firebaseAuthMethod.addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "createUserWithEmail:success");
                     // добавление пользователя
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    FirebaseUser user = firebaseAuth.getCurrentUser();// получение текущего пользователя
                     Toast.makeText(SignInActivity.this,
                             "Authentication complete", Toast.LENGTH_LONG).show();
                     //updateUI(user);
                     startActivity(new Intent(SignInActivity.this,
                             MainActivity.class));
                 } else {
-                    // If sign in fails, display a message to the user.
+                    // если не удалось войти тлт зарегистртроваться
                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
                     Toast.makeText(SignInActivity.this, "Authentication failed.",
                             Toast.LENGTH_LONG).show();
@@ -143,9 +160,14 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void checkCurrentUser() {
-        // метод уже залогининных пользователей отправляет в MainActivity
+        // метод для уже залогининных пользователей отправляет в MainActivity
         if (firebaseAuth.getCurrentUser() != null) {
             startActivity(new Intent(SignInActivity.this, MainActivity.class));
         }
+    }
+
+    private void handlerException(NoInfoFromEditTextException exception) {
+        Toast.makeText(SignInActivity.this, exception.getMessageException()
+                , Toast.LENGTH_LONG).show();
     }
 }

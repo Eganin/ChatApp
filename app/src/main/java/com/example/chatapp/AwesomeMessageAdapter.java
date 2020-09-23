@@ -36,6 +36,7 @@ public class AwesomeMessageAdapter extends ArrayAdapter<AwesomeMessage> {
         }
         findViews(view);
 
+        // получаем класс добавленный в адаптер методом adapter.add(new AwesomeMessage())
         AwesomeMessage awesomeMessage = getItem(position);
         isText = awesomeMessage.getImageUrl() == null;
         inflateMessage(awesomeMessage);
@@ -63,6 +64,10 @@ public class AwesomeMessageAdapter extends ArrayAdapter<AwesomeMessage> {
     }
 
     private void downloadImage(AwesomeMessage message){
+        /*
+        Загрузка изображения с помощью
+        библиотеки Glide
+         */
         Glide.with(imageViewPhoto.getContext())
                 .load(message.getImageUrl())
                 .into(imageViewPhoto);

@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         imageButtonSendPhoto = findViewById(R.id.imageButtonSendPhoto);
         buttonSendMessage = findViewById(R.id.buttonSendMessage);
         editTextMessage = findViewById(R.id.editTextMessage);
+        listView = findViewById(R.id.listView);
         progressBar.setVisibility(ProgressBar.INVISIBLE);
         initListView();
     }
@@ -73,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         userName = "Default";
 
         List<AwesomeMessage> awesomeMessages = new ArrayList<AwesomeMessage>();
-        listView = findViewById(R.id.listView);
         adapter = new AwesomeMessageAdapter(this, R.layout.message_item,
                 awesomeMessages);
 
@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 AwesomeMessage message = new AwesomeMessage();
                 message.setText(editTextMessage.getText().toString());
-                System.out.println(editTextMessage.getText().toString());
                 message.setName(userName);
                 message.setImageUrl(null);
 
@@ -130,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // ограничиваем вводимость символов
+        // ограничиваем вводимость 500  символами
         editTextMessage.setFilters(new InputFilter[]{
                 new InputFilter.LengthFilter(MAX_LENGTH_MESSAGE)
         });
@@ -140,21 +139,20 @@ public class MainActivity extends AppCompatActivity {
 
         // получаем доступ к корневой папке БД
         database = FirebaseDatabase.getInstance();
-        // ссылка на новый узел БД
+        // ссылка на узел БД
         messagesDatabaseReference = database.getReference().child("messages");
 
     }
 
     private void handlerChildEventListener() {
-        // обработчик изменений в базе данных
+        // обработчик всех изменений в базе данных
         messagesChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot,
                                      @Nullable String previousChildName) {
                 // срабатывает при добавлении элемента
                 AwesomeMessage message = snapshot.getValue(AwesomeMessage.class);
-                System.out.println(message.getText().toString());
-                adapter.add(message);
+                adapter.add(message);// добавляем в адаптер класс
 
             }
 
