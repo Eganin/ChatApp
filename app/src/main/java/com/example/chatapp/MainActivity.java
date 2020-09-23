@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -63,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         handlerEditText();
         handlerButtonSendMessage();
         handlerImageButtonSendPhoto();
-        handlerChildEventListener();
+        handlerMessagesChildEventListener();
+        handlerUsersChildEventListener();
     }
 
     private void findView() {
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         // ссылка на узел БД
         messagesDatabaseReference = database.getReference().child("messages");
+        usersDatabaseReference = database.getReference().child("users");
 
     }
 
@@ -159,13 +162,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void handlerChildEventListener() {
+    private void handlerMessagesChildEventListener() {
         // обработчик всех изменений в базе данных
         messagesChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot,
                                      @Nullable String previousChildName) {
                 // срабатывает при добавлении элемента
+
+                // получаем данные и помещаем их в класс
                 AwesomeMessage message = snapshot.getValue(AwesomeMessage.class);
                 adapter.add(message);// добавляем в адаптер класс
 
@@ -201,6 +206,48 @@ public class MainActivity extends AppCompatActivity {
 
         // добавляем к базе listener
         messagesDatabaseReference.addChildEventListener(messagesChildEventListener);
+    }
+
+    private void handlerUsersChildEventListener() {
+        usersChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot,
+                                     @Nullable String previousChildName) {
+                // получаем данные и помещаем их в класс
+                User user = snapshot.getValue(User.class);
+
+                String userID = user.getId();
+                String userFirebaseID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                // сравниваем тот же ли id находится в класса user и firebase
+                if(userID.equals(userFirebaseID)){
+                    userName = user.getName();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot,
+                                       @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot,
+                                     @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        usersDatabaseReference.addChildEventListener(usersChildEventListener);
     }
 
     @Override
