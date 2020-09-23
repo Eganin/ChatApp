@@ -20,7 +20,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CLEAR_EDIT_TEXT = "";
     private static final int MAX_LENGTH_MESSAGE = 500;
+    private static final String MIME_TYPE_IMAGES = "image/jpeg";
+    private static final String TEXT_INTENT_IMAGE = "Выберите изображение";
+    private static final Integer RC_IMAGE_PICKER = 123;
 
     private ListView listView;
     private AwesomeMessageAdapter adapter;
@@ -92,7 +94,13 @@ public class MainActivity extends AppCompatActivity {
         imageButtonSendPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                // intent для получения контента-изображения
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType(MIME_TYPE_IMAGES);// mime type
+                // получаем изображения с локального хранилища
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY,true);
+                startActivityForResult(Intent.createChooser(intent,TEXT_INTENT_IMAGE),
+                        RC_IMAGE_PICKER);
             }
         });
     }
