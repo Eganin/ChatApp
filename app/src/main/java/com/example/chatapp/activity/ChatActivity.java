@@ -201,7 +201,9 @@ public class ChatActivity extends AppCompatActivity {
                 AwesomeMessage message = snapshot.getValue(AwesomeMessage.class);
 
                 if(message.getSender().equals(auth.getCurrentUser().getUid())
-                && message.getRecipient().equals(recipientUserId)){
+                && message.getRecipient().equals(recipientUserId) ||
+                        message.getRecipient().equals(auth.getCurrentUser().getUid())
+                                && message.getSender().equals(recipientUserId)){
                     adapter.add(message);
                 }
 
@@ -350,6 +352,8 @@ public class ChatActivity extends AppCompatActivity {
                     awesomeMessage.setImageUrl(downloadUri.toString());
                     awesomeMessage.setName(userName);
                     awesomeMessage.setText(editTextMessage.getText().toString());
+                    awesomeMessage.setSender(auth.getCurrentUser().getUid());
+                    awesomeMessage.setRecipient(recipientUserId);
                     editTextMessage.setText(CLEAR_EDIT_TEXT);
                     // отправляем в DB
                     messagesDatabaseReference.push().setValue(awesomeMessage);

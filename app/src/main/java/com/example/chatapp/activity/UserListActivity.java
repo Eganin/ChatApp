@@ -62,7 +62,7 @@ public class UserListActivity extends AppCompatActivity {
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     User user = snapshot.getValue(User.class);
 
-                    if(user.getId().equals(auth.getCurrentUser().getUid())){
+                    if(!user.getId().equals(auth.getCurrentUser().getUid())){
                         // добавляем всех пользователей в RecyclerView кроме своего акаунта
                         user.setAvatarMockUpResource(R.drawable.ic_baseline_person_add_24);
                         userArrayList.add(user);
