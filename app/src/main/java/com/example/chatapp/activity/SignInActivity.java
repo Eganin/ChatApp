@@ -176,7 +176,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void startIntent(){
-        Intent intent = new Intent(SignInActivity.this , ChatActivity.class);
+        Intent intent = new Intent(SignInActivity.this , UserListActivity.class);
         intent.putExtra(NICKNAME,nickName);
         startActivity(intent);
     }
@@ -184,7 +184,7 @@ public class SignInActivity extends AppCompatActivity {
     private void checkCurrentUser() {
         // метод для уже залогининных пользователей отправляет в MainActivity
         if (firebaseAuth.getCurrentUser() != null) {
-            startActivity(new Intent(SignInActivity.this, ChatActivity.class));
+            startActivity(new Intent(SignInActivity.this, UserListActivity.class));
         }
     }
 
