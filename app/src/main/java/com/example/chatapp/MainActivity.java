@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -19,25 +20,28 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.chatapp.ContactException.IntentKeys.*;
+import static com.example.chatapp.ContactException.Text.*;
+import static com.example.chatapp.ContactException.Types.*;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String CLEAR_EDIT_TEXT = "";
-    private static final int MAX_LENGTH_MESSAGE = 500;
-    private static final String MIME_TYPE_IMAGES = "image/jpeg";
-    private static final String TEXT_INTENT_IMAGE = "Выберите изображение";
-    private static final Integer RC_IMAGE_PICKER = 123;
 
     private ListView listView;
     private AwesomeMessageAdapter adapter;
@@ -48,12 +52,22 @@ public class MainActivity extends AppCompatActivity {
 
     public static String userName;
 
+    /*
+    переменные для DB  с узлом messages
+     */
     FirebaseDatabase database;
     DatabaseReference messagesDatabaseReference;
     ChildEventListener messagesChildEventListener;
 
+    /*
+    переменные для работы c DB узлом  users
+     */
     DatabaseReference usersDatabaseReference;
     ChildEventListener usersChildEventListener;
+
+    // для работы со storage
+    FirebaseStorage firebaseStorage;
+    StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,9 +168,13 @@ public class MainActivity extends AppCompatActivity {
 
         // получаем доступ к корневой папке БД
         database = FirebaseDatabase.getInstance();
+        firebaseStorage = FirebaseStorage.getInstance();
         // ссылка на узел БД
         messagesDatabaseReference = database.getReference().child("messages");
         usersDatabaseReference = database.getReference().child("users");
+
+        // ссылаемся на папку которая создана в storage firebase
+        storageReference = firebaseStorage.getReference().child("chat_images");
 
     }
 
@@ -280,5 +298,58 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /*
+    данный метод вызывается после выбора
+    изображения пользователем через метод : handlerImageButtonSendPhoto
+     */
+    @Override
+    protected void onActivityResult(int requestCode , int resultCode , Intent data){
+        super.onActivityResult(requestCode , resultCode , data);
+        if(requestCode == RC_IMAGE_PICKER && resultCode == RESULT_OK){
+            // получаем Uri изображения
+            Uri selectedImageUri = data.getData();
+            // получаем последний сегмент изображения
+            StorageReference imageReference = storageReference
+                    .child(selectedImageUri.getLastPathSegment());
+
+            uploadFile(imageReference, selectedImageUri);
+        }
+    }
+
+    private void uploadFile(final StorageReference imageReference , Uri selectedImageUri){
+        // загружаем локальный файл-изображение в firebase storage
+
+        UploadTask uploadTask = imageReference.putFile(selectedImageUri);
+
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot,
+                Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    // если не проучилось занрузить файл
+                    throw task.getException();
+                }
+
+                return imageReference.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    // получаем ссылку изображения
+                    Uri downloadUri = task.getResult();
+                    AwesomeMessage awesomeMessage = new AwesomeMessage();
+                    awesomeMessage.setImageUrl(downloadUri.toString());
+                    awesomeMessage.setName(userName);
+
+                    // отправляем в DB
+                    messagesDatabaseReference.push().setValue(awesomeMessage);
+                } else {
+
+                }
+            }
+        });
     }
 }

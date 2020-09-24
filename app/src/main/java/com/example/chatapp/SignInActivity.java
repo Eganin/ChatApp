@@ -22,10 +22,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import static com.example.chatapp.ContactException.IntentKeys.*;
+import static com.example.chatapp.ContactException.TAG.*;
 
 public class SignInActivity extends AppCompatActivity {
-
-    private static final String TAG = "SignInActivity";
 
     FirebaseAuth firebaseAuth;
     FirebaseDatabase database;
