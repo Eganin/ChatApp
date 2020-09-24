@@ -22,6 +22,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import static com.example.chatapp.contacts.ContactException.IntentKeys.*;
+
 import java.util.ArrayList;
 
 public class UserListActivity extends AppCompatActivity {
@@ -36,6 +38,8 @@ public class UserListActivity extends AppCompatActivity {
     private UserAdapter userAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
+    private String userName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,7 @@ public class UserListActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
+        getDataFromSignInActivity();
         initRecyclerView();
         implementsInterfaceFromUserAdapter();
         attachUserDatabaseReferenceListener();
@@ -107,13 +112,16 @@ public class UserListActivity extends AppCompatActivity {
         userAdapter.setOnClickListener(new UserAdapter.OnUserClickListener() {
             @Override
             public void onUserClick(int position) {
-                goToChat();
+                goToChat(position);
             }
         });
     }
 
-    private void goToChat() {
+    private void goToChat(int position) {
         Intent intent = new Intent(UserListActivity.this , ChatActivity.class);
+        intent.putExtra(RECIPIENT_USER_ID,userArrayList.get(position).getId());
+        intent.putExtra(NICKNAME , userName);
+        startActivity(intent);
     }
 
     @Override
@@ -138,5 +146,10 @@ public class UserListActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void getDataFromSignInActivity(){
+        Intent intent = getIntent();
+        userName = intent.getStringExtra(NICKNAME);
     }
 }

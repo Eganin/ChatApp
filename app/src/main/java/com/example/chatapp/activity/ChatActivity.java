@@ -54,11 +54,13 @@ public class ChatActivity extends AppCompatActivity {
     private Button buttonSendMessage;
     private EditText editTextMessage;
 
-    public static String userName;
+    public String userName;
+    private String recipientUserId;
 
     /*
     переменные для DB  с узлом messages
      */
+    FirebaseAuth auth;
     FirebaseDatabase database;
     DatabaseReference messagesDatabaseReference;
     ChildEventListener messagesChildEventListener;
@@ -79,8 +81,8 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         initFareBaseDB();
-        getDataFromSignInActivity();
         findView();
+        getDataFromUserListActivity();
         handlerEditText();
         handlerButtonSendMessage();
         handlerImageButtonSendPhoto();
@@ -131,6 +133,8 @@ public class ChatActivity extends AppCompatActivity {
                 message.setText(editTextMessage.getText().toString());
                 message.setName(userName);
                 message.setImageUrl(null);
+                message.setSender(auth.getCurrentUser().getUid());
+                message.setRecipient(recipientUserId);
 
                 // отправляем объект на Firebase DB
                 messagesDatabaseReference.push().setValue(message);
@@ -170,6 +174,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private void initFareBaseDB() {
 
+        auth = FirebaseAuth.getInstance();
+
         // получаем доступ к корневой папке БД
         database = FirebaseDatabase.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
@@ -182,15 +188,6 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void getDataFromSignInActivity(){
-        Intent currentIntent = getIntent();
-        if(currentIntent != null){
-            userName = currentIntent.getStringExtra(NICKNAME);
-            System.out.println(userName);
-        }else {
-            userName = "Default User";
-        }
-    }
 
     private void handlerMessagesChildEventListener() {
         // обработчик всех изменений в базе данных
@@ -202,7 +199,11 @@ public class ChatActivity extends AppCompatActivity {
 
                 // получаем данные и помещаем их в класс
                 AwesomeMessage message = snapshot.getValue(AwesomeMessage.class);
-                adapter.add(message);// добавляем в адаптер класс
+
+                if(message.getSender().equals(auth.getCurrentUser().getUid())
+                && message.getRecipient().equals(recipientUserId)){
+                    adapter.add(message);
+                }
 
             }
 
@@ -357,5 +358,13 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void getDataFromUserListActivity(){
+        Intent intent = getIntent();
+        if(intent != null){
+            recipientUserId =intent.getStringExtra(RECIPIENT_USER_ID);
+            userName = intent.getStringExtra(NICKNAME);
+        }
     }
 }
