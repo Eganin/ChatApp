@@ -1,4 +1,4 @@
-package com.example.chatapp;
+package com.example.chatapp.exception;
 
 public class NoInfoFromEditTextException extends Exception {
 

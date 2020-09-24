@@ -1,4 +1,4 @@
-package com.example.chatapp;
+package com.example.chatapp.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chatapp.contacts.ContactException;
+import com.example.chatapp.exception.NoInfoFromEditTextException;
+import com.example.chatapp.R;
+import com.example.chatapp.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -21,8 +25,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import static com.example.chatapp.ContactException.IntentKeys.*;
-import static com.example.chatapp.ContactException.TAG.*;
+import static com.example.chatapp.contacts.ContactException.IntentKeys.*;
+import static com.example.chatapp.contacts.ContactException.TAG.*;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -172,7 +176,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void startIntent(){
-        Intent intent = new Intent(SignInActivity.this , MainActivity.class);
+        Intent intent = new Intent(SignInActivity.this , ChatActivity.class);
         intent.putExtra(NICKNAME,nickName);
         startActivity(intent);
     }
@@ -180,7 +184,7 @@ public class SignInActivity extends AppCompatActivity {
     private void checkCurrentUser() {
         // метод для уже залогининных пользователей отправляет в MainActivity
         if (firebaseAuth.getCurrentUser() != null) {
-            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+            startActivity(new Intent(SignInActivity.this, ChatActivity.class));
         }
     }
 

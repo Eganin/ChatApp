@@ -1,4 +1,4 @@
-package com.example.chatapp;
+package com.example.chatapp.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
+import com.example.chatapp.R;
+import com.example.chatapp.model.AwesomeMessage;
 
 import java.util.List;
 
@@ -46,11 +48,12 @@ public class AwesomeMessageAdapter extends ArrayAdapter<AwesomeMessage> {
 
     private void inflateMessage(AwesomeMessage message){
         if (isText) {
-            textViewText.setVisibility(View.VISIBLE);
+            //textViewText.setVisibility(View.VISIBLE);
             textViewText.setText(message.getText());
             imageViewPhoto.setVisibility(View.GONE);
         } else {
-            textViewText.setVisibility(View.GONE);
+            //textViewText.setVisibility(View.GONE);
+            textViewText.setText(message.getText());
             imageViewPhoto.setVisibility(View.VISIBLE);
         }
 

@@ -1,4 +1,4 @@
-package com.example.chatapp;
+package com.example.chatapp.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +20,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.example.chatapp.model.AwesomeMessage;
+import com.example.chatapp.adapter.AwesomeMessageAdapter;
+import com.example.chatapp.R;
+import com.example.chatapp.model.User;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,11 +40,11 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.chatapp.ContactException.IntentKeys.*;
-import static com.example.chatapp.ContactException.Text.*;
-import static com.example.chatapp.ContactException.Types.*;
+import static com.example.chatapp.contacts.ContactException.IntentKeys.*;
+import static com.example.chatapp.contacts.ContactException.Text.*;
+import static com.example.chatapp.contacts.ContactException.Types.*;
 
-public class MainActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity {
 
 
     private ListView listView;
@@ -72,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_chat);
 
         initFareBaseDB();
         getDataFromSignInActivity();
@@ -292,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.sign_out:
                 // разлогиниваемся в FireBase
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MainActivity.this , SignInActivity.class));
+                startActivity(new Intent(ChatActivity.this , SignInActivity.class));
                 return true;
 
             default:
@@ -321,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
     private void uploadFile(final StorageReference imageReference , Uri selectedImageUri){
         // загружаем локальный файл-изображение в firebase storage
 
+        // загружаем файл
         UploadTask uploadTask = imageReference.putFile(selectedImageUri);
 
         Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot,
@@ -328,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                 if (!task.isSuccessful()) {
-                    // если не проучилось занрузить файл
+                    // если не получилось занрузить файл
                     throw task.getException();
                 }
 
@@ -338,12 +343,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
-                    // получаем ссылку изображения
+                    // получаем ссылку изображения котрое потом скачаем с помощью Glide
                     Uri downloadUri = task.getResult();
                     AwesomeMessage awesomeMessage = new AwesomeMessage();
                     awesomeMessage.setImageUrl(downloadUri.toString());
                     awesomeMessage.setName(userName);
-
+                    awesomeMessage.setText(editTextMessage.getText().toString());
+                    editTextMessage.setText(CLEAR_EDIT_TEXT);
                     // отправляем в DB
                     messagesDatabaseReference.push().setValue(awesomeMessage);
                 } else {
