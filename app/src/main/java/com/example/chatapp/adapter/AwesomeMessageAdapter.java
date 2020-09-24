@@ -2,6 +2,7 @@ package com.example.chatapp.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -18,61 +19,86 @@ import java.util.List;
 
 public class AwesomeMessageAdapter extends ArrayAdapter<AwesomeMessage> {
 
-    private boolean isText;
-    private ImageView imageViewPhoto;
-    private TextView textViewText;
-    private TextView textViewName;
+    private List<AwesomeMessage> messages;
+    private Activity activity;
 
-    public AwesomeMessageAdapter(@NonNull Context context, int resource,
+    public AwesomeMessageAdapter(@NonNull Activity context, int resource,
                                  List<AwesomeMessage> messages) {
         super(context, resource, messages);
+        this.messages=messages;
+        this.activity=context;
     }
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
 
-        if (view == null) {
-            // create view message if view  not created
-            view = ((Activity) getContext()).getLayoutInflater()
-                    .inflate(R.layout.message_item, parent, false);
-        }
-        findViews(view);
+        ViewHolder viewHolder;
+        LayoutInflater layoutInflater = (LayoutInflater)
+                activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
-        // получаем класс добавленный в адаптер методом adapter.add(new AwesomeMessage())
-        AwesomeMessage awesomeMessage = getItem(position);
-        isText = awesomeMessage.getImageUrl() == null;
-        inflateMessage(awesomeMessage);
-        downloadImage(awesomeMessage);
+        AwesomeMessage message = getItem(position);
+        int layoutResource = 0 ;
+        int viewType = getItemViewType(position);
+
+        if(viewType ==0){
+            layoutResource = R.layout.my_message_item;
+        }else{
+            layoutResource = R.layout.your_message_item;
+        }
+
+        if(view != null){
+            viewHolder=(ViewHolder)view.getTag();
+        }else{
+            view= layoutInflater.inflate(layoutResource , parent , false);
+
+            viewHolder = new ViewHolder(view);
+            view.setTag(viewHolder);
+        }
+
+        viewHolder.textViewMessage.setText(message.getText());
+        downloadImage(message , viewHolder);
         return view;
     }
 
-    private void inflateMessage(AwesomeMessage message){
-        if (isText) {
-            //textViewText.setVisibility(View.VISIBLE);
-            textViewText.setText(message.getText());
-            imageViewPhoto.setVisibility(View.GONE);
-        } else {
-            //textViewText.setVisibility(View.GONE);
-            textViewText.setText(message.getText());
-            imageViewPhoto.setVisibility(View.VISIBLE);
+    @Override
+    public int getItemViewType(int position){
+
+        int flag;
+        AwesomeMessage awesomeMessage = messages.get(position);
+        if(awesomeMessage.isMineMessage()){
+            flag = 0;
+
+        }else{
+            flag = 1;
         }
 
-        textViewName.setText(message.getName());
+        return flag;
     }
 
-    private void findViews(View view){
-        imageViewPhoto = view.findViewById(R.id.imageViewPhoto);
-        textViewText = view.findViewById(R.id.textViewText);
-        textViewName = view.findViewById(R.id.textViewName);
+    @Override
+    public int getViewTypeCount(){
+        return 2;
     }
 
-    private void downloadImage(AwesomeMessage message){
+    private static class ViewHolder{
+        private TextView textViewMessage;
+        private ImageView imageViewPhoto;
+
+        public ViewHolder(View view){
+            textViewMessage = view.findViewById(R.id.textViewMessage);
+            imageViewPhoto = view.findViewById(R.id.imageViewPhoto);
+        }
+    }
+
+
+
+    private void downloadImage(AwesomeMessage message , ViewHolder holder){
         /*
         Загрузка изображения с помощью
         библиотеки Glide
          */
-        Glide.with(imageViewPhoto.getContext())
+        Glide.with(holder.imageViewPhoto.getContext())
                 .load(message.getImageUrl())
-                .into(imageViewPhoto);
+                .into(holder.imageViewPhoto);
     }
 }

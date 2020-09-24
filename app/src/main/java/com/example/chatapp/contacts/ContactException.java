@@ -15,6 +15,7 @@ public final class ContactException {
     public static final class IntentKeys{
         public static final String NICKNAME = "NickName";
         public static final String RECIPIENT_USER_ID = "recipientUserId";
+        public static final String RECIPIENT_USER_NAME = "recipientUserName";
     }
 
     public static final class TAG{

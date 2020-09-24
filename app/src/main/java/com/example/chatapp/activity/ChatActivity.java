@@ -56,6 +56,7 @@ public class ChatActivity extends AppCompatActivity {
 
     public String userName;
     private String recipientUserId;
+    private String recipientUserName;
 
     /*
     переменные для DB  с узлом messages
@@ -201,9 +202,12 @@ public class ChatActivity extends AppCompatActivity {
                 AwesomeMessage message = snapshot.getValue(AwesomeMessage.class);
 
                 if(message.getSender().equals(auth.getCurrentUser().getUid())
-                && message.getRecipient().equals(recipientUserId) ||
-                        message.getRecipient().equals(auth.getCurrentUser().getUid())
+                && message.getRecipient().equals(recipientUserId)){
+                    message.setMineMessage(true);// мое сообщение
+                    adapter.add(message);
+                }else if(message.getRecipient().equals(auth.getCurrentUser().getUid())
                                 && message.getSender().equals(recipientUserId)){
+                    message.setMineMessage(false);// сообщение собеседника
                     adapter.add(message);
                 }
 
@@ -368,7 +372,9 @@ public class ChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent != null){
             recipientUserId =intent.getStringExtra(RECIPIENT_USER_ID);
+            recipientUserName = intent.getStringExtra(RECIPIENT_USER_NAME);
             userName = intent.getStringExtra(NICKNAME);
         }
+        setTitle(recipientUserName);
     }
 }
