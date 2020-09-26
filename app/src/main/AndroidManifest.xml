@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activity.UserListActivity"></activity>
         <activity android:name=".activity.ChatActivity" />
-        <activity android:name=".activity.SignInActivity">
+        <activity android:name=".mvp.signin.SignInView">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

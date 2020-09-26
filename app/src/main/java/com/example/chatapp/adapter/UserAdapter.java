@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapp.R;
-import com.example.chatapp.model.User;
+import com.example.chatapp.common.User;
 
 import java.util.ArrayList;
 

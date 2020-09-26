@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
 import com.example.chatapp.R;
-import com.example.chatapp.model.AwesomeMessage;
+import com.example.chatapp.common.AwesomeMessage;
 
 import java.util.List;
 

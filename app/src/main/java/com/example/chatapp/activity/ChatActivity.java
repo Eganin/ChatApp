@@ -20,10 +20,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.example.chatapp.model.AwesomeMessage;
+import com.example.chatapp.common.AwesomeMessage;
 import com.example.chatapp.adapter.AwesomeMessageAdapter;
 import com.example.chatapp.R;
-import com.example.chatapp.model.User;
+import com.example.chatapp.common.User;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

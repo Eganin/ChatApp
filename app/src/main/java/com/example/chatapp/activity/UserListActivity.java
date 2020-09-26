@@ -15,7 +15,7 @@ import android.view.MenuItem;
 
 import com.example.chatapp.R;
 import com.example.chatapp.adapter.UserAdapter;
-import com.example.chatapp.model.User;
+import com.example.chatapp.common.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;

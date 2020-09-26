@@ -43,4 +43,10 @@ public final class ContactException {
         public static final String FAVORITE="Избранное";
     }
 
+
+    public static final class ToastText{
+        public static final String TOAST_TEXT_AUTH_COMPLETE="Authentication complete.";
+        public static final String TOAST_TEXT_AUTH_FAILED="Authentication failed.";
+    }
+
 }

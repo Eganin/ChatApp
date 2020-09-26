@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.example.chatapp.contacts.ContactException;
 import com.example.chatapp.exception.NoInfoFromEditTextException;
 import com.example.chatapp.R;
-import com.example.chatapp.model.User;
+import com.example.chatapp.common.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -173,7 +173,7 @@ public class SignInActivity extends AppCompatActivity {
                         createUser(user);
                     }
                     Toast.makeText(SignInActivity.this,
-                            "Authentication complete", Toast.LENGTH_LONG).show();
+                           "Authentication complete", Toast.LENGTH_LONG).show();
                     startIntent();
                 } else {
                     // если не удалось войти или зарегистртроваться
