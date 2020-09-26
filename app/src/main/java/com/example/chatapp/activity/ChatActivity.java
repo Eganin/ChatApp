@@ -24,6 +24,7 @@ import com.example.chatapp.common.AwesomeMessage;
 import com.example.chatapp.adapter.AwesomeMessageAdapter;
 import com.example.chatapp.R;
 import com.example.chatapp.common.User;
+import com.example.chatapp.mvp.signin.SignInView;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -306,7 +307,7 @@ public class ChatActivity extends AppCompatActivity {
             case R.id.sign_out:
                 // разлогиниваемся в FireBase
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(ChatActivity.this , SignInActivity.class));
+                startActivity(new Intent(ChatActivity.this , SignInView.class));
                 return true;
 
             default:

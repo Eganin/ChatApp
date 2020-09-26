@@ -12,8 +12,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import static com.example.chatapp.contacts.ContactException.ToastText.*;
-
 public class SignInModel {
 
     public static FirebaseAuth firebaseAuth;

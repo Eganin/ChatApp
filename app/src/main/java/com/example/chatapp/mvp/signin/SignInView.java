@@ -13,10 +13,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chatapp.R;
 
-import com.example.chatapp.activity.UserListActivity;
 import com.example.chatapp.common.InfoUserSignIn;
 
 import com.example.chatapp.exception.NoInfoFromEditTextException;
+import com.example.chatapp.mvp.userlist.UserListView;
 
 import static com.example.chatapp.contacts.ContactException.IntentKeys.NICKNAME;
 import static com.example.chatapp.contacts.ContactException.ToggleLoginModeTexts.LOG_IN;
@@ -137,7 +137,7 @@ public class SignInView extends AppCompatActivity {
     }
 
     public void startIntentUserListView(){
-        Intent intent = new Intent(SignInView.this , UserListActivity.class);
+        Intent intent = new Intent(SignInView.this , UserListView.class);
         intent.putExtra(NICKNAME,nickName);
         startActivity(intent);
     }
