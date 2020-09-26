@@ -32,4 +32,15 @@ public final class ContactException {
         public static final Integer RC_IMAGE_PICKER = 123;
     }
 
+    public static final class ToggleLoginModeTexts{
+        public static final String SIGN_UP = "Sign Up";
+        public static final String SWITCH_LOG_IN = "Tap to Log In";
+        public static final String LOG_IN = "Log In";
+        public static final String SWITCH_SIGN_UP = "Tap to Sign Up";
+    }
+
+    public static final class NameFavoriteUser{
+        public static final String FAVORITE="Избранное";
+    }
+
 }

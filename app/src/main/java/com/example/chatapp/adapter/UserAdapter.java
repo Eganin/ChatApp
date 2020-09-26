@@ -20,6 +20,7 @@ public class UserAdapter
     private ArrayList<User> userArrayList;
     private OnUserClickListener listener;
 
+    // оставляем interface для того чтобы потом его реализовать в UserListActivity
     public interface OnUserClickListener {
         void onUserClick(int position);
     }

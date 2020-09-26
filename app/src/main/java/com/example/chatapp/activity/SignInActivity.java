@@ -27,12 +27,13 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import static com.example.chatapp.contacts.ContactException.IntentKeys.*;
 import static com.example.chatapp.contacts.ContactException.TAG.*;
+import static com.example.chatapp.contacts.ContactException.ToggleLoginModeTexts.*;
 
 public class SignInActivity extends AppCompatActivity {
 
-    FirebaseAuth firebaseAuth;
-    FirebaseDatabase database;
-    DatabaseReference usersDatabaseReference;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference usersDatabaseReference;
 
 
     private EditText editTextEmail;
@@ -44,7 +45,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private String nickName;
 
-    private boolean loginModeActive;
+    private boolean loginModeActive; // регистрируется или логируется пользователь
     private boolean isNewUser;
 
     @Override
@@ -59,6 +60,9 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void findView() {
+        /*
+        ищем все действующие поля views
+         */
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextNickName = findViewById(R.id.editTextNickName);
@@ -73,6 +77,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Pair<String, String> pairEditTextResult;
                 try {
+                    // проыеряем что ввел пользователь
                     if ((pairEditTextResult = checkingValuesEditTexts()) != null) {
                         loginSignUpUser(pairEditTextResult.first, pairEditTextResult.second);
                     }
@@ -87,7 +92,7 @@ public class SignInActivity extends AppCompatActivity {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         String repeatPassword = editTextPasswordRepeat.getText().toString().trim();
-         nickName = editTextNickName.getText().toString().trim();
+        nickName = editTextNickName.getText().toString().trim();
 
         if (loginModeActive) {
             if (email.equals("")) {
@@ -125,27 +130,32 @@ public class SignInActivity extends AppCompatActivity {
 
     private void loginSignUpUser(String email, String password) {
         // метод отвечает за добавление пользователя в Firebase
+        // проверяем регистрируется или логинится пользователь
         if (loginModeActive) {
-            // вызываем метод для проверки и входа пользователя
             isNewUser = false;
+            // sign in user
             loginOrSignUpUser(firebaseAuth.signInWithEmailAndPassword(email, password),isNewUser);
         } else {
-            // вызываем метод для регистрации пользователя
             isNewUser = true;
+            // create authorization user
             loginOrSignUpUser(firebaseAuth.createUserWithEmailAndPassword(email, password),isNewUser);
         }
     }
 
     public void toggleLoginMode(View view) {
+        /*
+        Метод менят интерфейс с помощью TextView
+        между регистрацией и входом
+         */
         if (loginModeActive) {
             loginModeActive = false;
-            buttonSignUp.setText("Sign Up");
-            toggleLoginSignUpTextView.setText("Tap to Log In");
+            buttonSignUp.setText(SIGN_UP);
+            toggleLoginSignUpTextView.setText(SWITCH_LOG_IN);
             editTextPasswordRepeat.setVisibility(View.VISIBLE);
         } else {
             loginModeActive = true;
-            buttonSignUp.setText("Log In");
-            toggleLoginSignUpTextView.setText("Tap to Sign Up");
+            buttonSignUp.setText(LOG_IN);
+            toggleLoginSignUpTextView.setText(SWITCH_SIGN_UP);
             editTextPasswordRepeat.setVisibility(View.GONE);
         }
     }
@@ -183,17 +193,22 @@ public class SignInActivity extends AppCompatActivity {
 
     private void checkCurrentUser() {
         // метод для уже залогининных пользователей отправляет в MainActivity
+        // получаем текущего пользователя
         if (firebaseAuth.getCurrentUser() != null) {
             startActivity(new Intent(SignInActivity.this, UserListActivity.class));
         }
     }
 
     private void handlerException(NoInfoFromEditTextException exception) {
+        // обрабатываем свою ошибку NoInfoFromEditTextException
         Toast.makeText(SignInActivity.this, exception.getMessageException()
                 , Toast.LENGTH_LONG).show();
     }
 
     private void createUser(FirebaseUser firebaseUser){
+        /*
+        создаем объект User для добавления в БД
+         */
         User user = new User();
         // вставляем id пользователя
         user.setId(firebaseUser.getUid());
@@ -202,7 +217,7 @@ public class SignInActivity extends AppCompatActivity {
         // вставляем nickname пользователя
         user.setName(editTextNickName.getText().toString());
 
-        //отправляем класс в базу
+        //отправляем объект в базу
         usersDatabaseReference.push().setValue(user);
     }
 

@@ -61,20 +61,21 @@ public class ChatActivity extends AppCompatActivity {
     /*
     переменные для DB  с узлом messages
      */
-    FirebaseAuth auth;
-    FirebaseDatabase database;
-    DatabaseReference messagesDatabaseReference;
-    ChildEventListener messagesChildEventListener;
+
+    private FirebaseAuth auth;
+    private FirebaseDatabase database;
+    private DatabaseReference messagesDatabaseReference;
+    private ChildEventListener messagesChildEventListener;
 
     /*
     переменные для работы c DB узлом  users
      */
-    DatabaseReference usersDatabaseReference;
-    ChildEventListener usersChildEventListener;
+    private DatabaseReference usersDatabaseReference;
+    private ChildEventListener usersChildEventListener;
 
     // для работы со storage
-    FirebaseStorage firebaseStorage;
-    StorageReference storageReference;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,17 +197,19 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot,
                                      @Nullable String previousChildName) {
-                // срабатывает при добавлении элемента
+                // срабатывает при добавлении элемента и при загрузке всех элементов
 
                 // получаем данные и помещаем их в класс
                 AwesomeMessage message = snapshot.getValue(AwesomeMessage.class);
 
                 if(message.getSender().equals(auth.getCurrentUser().getUid())
                 && message.getRecipient().equals(recipientUserId)){
+                    // проверка наше ли сообщение для данного пользователя
                     message.setMineMessage(true);// мое сообщение
                     adapter.add(message);
                 }else if(message.getRecipient().equals(auth.getCurrentUser().getUid())
                                 && message.getSender().equals(recipientUserId)){
+                    // проверка сообщения от отправителя
                     message.setMineMessage(false);// сообщение собеседника
                     adapter.add(message);
                 }

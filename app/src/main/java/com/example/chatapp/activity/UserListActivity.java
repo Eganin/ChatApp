@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import static com.example.chatapp.contacts.ContactException.IntentKeys.*;
+import static com.example.chatapp.contacts.ContactException.NameFavoriteUser.*;
 
 import java.util.ArrayList;
 
@@ -56,11 +57,14 @@ public class UserListActivity extends AppCompatActivity {
     }
 
     private void attachUserDatabaseReferenceListener() {
+        // обработка изменений в DB в узде users
+        // ссылка на узел в DB
         usersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
         if(userChildEventListener == null){
             userChildEventListener = new ChildEventListener() {
                 @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                public void onChildAdded(@NonNull DataSnapshot snapshot,
+                                         @Nullable String previousChildName) {
                     User user = snapshot.getValue(User.class);
 
                     if(!user.getId().equals(auth.getCurrentUser().getUid())){
@@ -68,11 +72,18 @@ public class UserListActivity extends AppCompatActivity {
                         user.setAvatarMockUpResource(R.drawable.ic_baseline_person_add_24);
                         userArrayList.add(user);
                         userAdapter.notifyDataSetChanged(); // update recycler view
+                    }else if(user.getId().equals(auth.getCurrentUser().getUid())){
+                        // свой аккаунт меняем на переписку в избранном
+                        user.setAvatarMockUpResource(R.drawable.ic_baseline_person_pin_24);
+                        user.setName(FAVORITE);
+                        userArrayList.add(user);
+                        userAdapter.notifyDataSetChanged();
                     }
                 }
 
                 @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                public void onChildChanged(@NonNull DataSnapshot snapshot,
+                                           @Nullable String previousChildName) {
 
                 }
 
@@ -82,7 +93,8 @@ public class UserListActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                public void onChildMoved(@NonNull DataSnapshot snapshot,
+                                         @Nullable String previousChildName) {
 
                 }
 
@@ -92,6 +104,7 @@ public class UserListActivity extends AppCompatActivity {
                 }
             };
 
+            // добавляем обработчик
             usersDatabaseReference.addChildEventListener(userChildEventListener);
         }
     }

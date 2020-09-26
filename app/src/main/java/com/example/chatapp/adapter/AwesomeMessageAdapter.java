@@ -1,7 +1,6 @@
 package com.example.chatapp.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +24,8 @@ public class AwesomeMessageAdapter extends ArrayAdapter<AwesomeMessage> {
     public AwesomeMessageAdapter(@NonNull Activity context, int resource,
                                  List<AwesomeMessage> messages) {
         super(context, resource, messages);
-        this.messages=messages;
-        this.activity=context;
+        this.messages = messages;
+        this.activity = context;
     }
 
     @Override
@@ -34,41 +33,43 @@ public class AwesomeMessageAdapter extends ArrayAdapter<AwesomeMessage> {
 
         ViewHolder viewHolder;
         LayoutInflater layoutInflater = (LayoutInflater)
-                activity.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+                activity.getLayoutInflater();
 
         AwesomeMessage message = getItem(position);
-        int layoutResource = 0 ;
+        int layoutResource = 0;
         int viewType = getItemViewType(position);
 
-        if(viewType ==0){
+        if (viewType == 0) {
             layoutResource = R.layout.my_message_item;
-        }else{
+        } else {
             layoutResource = R.layout.your_message_item;
         }
 
-        if(view != null){
-            viewHolder=(ViewHolder)view.getTag();
-        }else{
-            view= layoutInflater.inflate(layoutResource , parent , false);
+        if (view != null) {
+            viewHolder = (ViewHolder) view.getTag();
+        } else {
+            view = layoutInflater.inflate(layoutResource, parent, false);
 
             viewHolder = new ViewHolder(view);
             view.setTag(viewHolder);
         }
 
         viewHolder.textViewMessage.setText(message.getText());
-        downloadImage(message , viewHolder);
+        if (message.getImageUrl() != null) {
+            downloadImage(message, viewHolder);
+        }
         return view;
     }
 
     @Override
-    public int getItemViewType(int position){
-
+    public int getItemViewType(int position) {
+        // переопределяем метод для обработки двух случаев
         int flag;
         AwesomeMessage awesomeMessage = messages.get(position);
-        if(awesomeMessage.isMineMessage()){
+        if (awesomeMessage.isMineMessage()) {
             flag = 0;
 
-        }else{
+        } else {
             flag = 1;
         }
 
@@ -76,23 +77,22 @@ public class AwesomeMessageAdapter extends ArrayAdapter<AwesomeMessage> {
     }
 
     @Override
-    public int getViewTypeCount(){
+    public int getViewTypeCount() {//возвращение кол-ва вариаций
         return 2;
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         private TextView textViewMessage;
         private ImageView imageViewPhoto;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             textViewMessage = view.findViewById(R.id.textViewMessage);
             imageViewPhoto = view.findViewById(R.id.imageViewPhoto);
         }
     }
 
 
-
-    private void downloadImage(AwesomeMessage message , ViewHolder holder){
+    private void downloadImage(AwesomeMessage message, ViewHolder holder) {
         /*
         Загрузка изображения с помощью
         библиотеки Glide
