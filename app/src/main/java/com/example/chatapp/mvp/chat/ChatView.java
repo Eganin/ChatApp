@@ -23,10 +23,7 @@ import com.example.chatapp.adapter.AwesomeMessageAdapter;
 import com.example.chatapp.common.AwesomeMessage;
 import com.example.chatapp.common.DataMessage;
 import com.example.chatapp.mvp.signin.SignInView;
-import com.example.chatapp.mvp.userlist.UserListModel;
-import com.example.chatapp.mvp.userlist.UserListPresenter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +31,8 @@ import java.util.List;
 import static com.example.chatapp.contacts.ContactException.IntentKeys.NICKNAME;
 import static com.example.chatapp.contacts.ContactException.IntentKeys.RECIPIENT_USER_ID;
 import static com.example.chatapp.contacts.ContactException.IntentKeys.RECIPIENT_USER_NAME;
-import static com.example.chatapp.contacts.ContactException.Text.TEXT_INTENT_IMAGE;
+import static com.example.chatapp.contacts.ContactException.Text.CLEAR_EDIT_TEXT;
 import static com.example.chatapp.contacts.ContactException.Types.MAX_LENGTH_MESSAGE;
-import static com.example.chatapp.contacts.ContactException.Types.MIME_TYPE_IMAGES;
 import static com.example.chatapp.contacts.ContactException.Types.RC_IMAGE_PICKER;
 
 public class ChatView extends AppCompatActivity {
@@ -61,9 +57,11 @@ public class ChatView extends AppCompatActivity {
 
         initPresenter();
         initDB();
+        findView();
         getDataFromUserListActivity();
         handlerEditText();
         handlerButtonSendMessage();
+        handlerImageButtonSendPhoto();
         handlerMessagesChildEventListener();
         handlerUsersChildEventListener();
     }
@@ -132,13 +130,7 @@ public class ChatView extends AppCompatActivity {
         imageButtonSendPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // intent для получения контента-изображения
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType(MIME_TYPE_IMAGES);// mime type
-                // получаем изображения с локального хранилища
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY,true);
-                startActivityForResult(Intent.createChooser(intent,TEXT_INTENT_IMAGE),
-                        RC_IMAGE_PICKER);
+                presenter.newIntentForImageChoose();
             }
         });
     }
@@ -151,13 +143,7 @@ public class ChatView extends AppCompatActivity {
     protected void onActivityResult(int requestCode , int resultCode , Intent data){
         super.onActivityResult(requestCode , resultCode , data);
         if(requestCode == RC_IMAGE_PICKER && resultCode == RESULT_OK){
-            // получаем Uri изображения
-            Uri selectedImageUri = data.getData();
-            // получаем последний сегмент изображения
-            StorageReference imageReference = storageReference
-                    .child(selectedImageUri.getLastPathSegment());
-
-            uploadFile(imageReference, selectedImageUri);
+            presenter.downloadFile(data);
         }
     }
 
@@ -208,7 +194,7 @@ public class ChatView extends AppCompatActivity {
         });
     }
 
-    private DataMessage getDataFromMessage(){
+    public DataMessage getDataFromMessage(){
         String textMessage = editTextMessage.getText().toString();
         String userName = this.userName;
         String recipientId = this.recipientUserId;
@@ -219,10 +205,18 @@ public class ChatView extends AppCompatActivity {
     }
 
     private void handlerMessagesChildEventListener(){
-
+        presenter.listenerMessages();
     }
 
     private void handlerUsersChildEventListener(){
+        presenter.listenerUsers();
+    }
 
+    public void clearEditText(){
+        editTextMessage.setText(CLEAR_EDIT_TEXT);
+    }
+
+    public void interactionWithAdapter(AwesomeMessage message) {
+        adapter.add(message);
     }
 }

@@ -15,6 +15,7 @@ import com.example.chatapp.R;
 import com.example.chatapp.activity.ChatActivity;
 import com.example.chatapp.adapter.UserAdapter;
 import com.example.chatapp.common.User;
+import com.example.chatapp.mvp.chat.ChatView;
 import com.example.chatapp.mvp.signin.SignInView;
 
 import java.util.ArrayList;

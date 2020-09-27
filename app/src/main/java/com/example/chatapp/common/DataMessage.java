@@ -15,6 +15,7 @@ public class DataMessage {
         this.recipientId=recipientId;
     }
 
+
     public String getRecipientId() {
         return recipientId;
     }
