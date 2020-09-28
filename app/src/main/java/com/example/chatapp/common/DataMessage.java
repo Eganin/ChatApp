@@ -39,4 +39,12 @@ public class DataMessage {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
+    @Override
+    public String toString(){
+        String stringResult = "Text: "+ getTextMessage()+" UserName:" +
+                getUserName() + " RecipientID" + getRecipientId();
+
+        return stringResult;
+    }
 }

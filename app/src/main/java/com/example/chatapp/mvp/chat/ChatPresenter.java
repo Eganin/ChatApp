@@ -27,35 +27,23 @@ public class ChatPresenter {
         this.view = null;
     }
 
-    public void initDB(){
-        model.initDB(new ChatModel.initCallBack() {
-            @Override
-            public void init() {
-
-            }
-        });
+    public void initDB(ChatView chatView){
+        model.initDB();
+        attachView(chatView);
     }
 
-    public void sendMessage(DataMessage dataMessage){
+    public void sendMessage(DataMessage dataMessage, ChatView chatView){
         AwesomeMessage message = new AwesomeMessage();
         message.setText(dataMessage.getTextMessage());
         message.setName(dataMessage.getUserName());
         message.setImageUrl(null);
-        message.setSender(model.getCurrentUserId(new ChatModel.initCallBack() {
-            @Override
-            public void init() {
-
-            }
-        }));
+        message.setIsImage(false);
+        message.setSender(model.getCurrentUserId());
         message.setRecipient(dataMessage.getRecipientId());
 
-        model.pushDBFireBase(new ChatModel.initCallBack() {
-            @Override
-            public void init() {
+        model.pushDBFireBase(message);
 
-            }
-        },message);
-
+        attachView(chatView);
         view.clearEditText();
     }
 
@@ -83,12 +71,13 @@ public class ChatPresenter {
     }
 
 
-    public void listenerMessages() {
+    public void listenerMessages(final ChatView chatView) {
         DataMessage dataMessage = view.getDataFromMessage();
         String recipientId = dataMessage.getRecipientId();
         model.messagesChildEventListener(new ChatModel.interactionWithAdapter() {
             @Override
             public void interaction(AwesomeMessage message) {
+                attachView(chatView);
                 view.interactionWithAdapter(message);
             }
         },recipientId);

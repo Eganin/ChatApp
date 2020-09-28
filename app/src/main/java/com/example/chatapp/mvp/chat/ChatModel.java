@@ -21,8 +21,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import static com.example.chatapp.contacts.ContactException.Text.CLEAR_EDIT_TEXT;
-
 public class ChatModel {
 
     /*
@@ -56,7 +54,7 @@ public class ChatModel {
         void setUserName(String name);
     }
 
-    public void initDB(initCallBack init){
+    public void initDB(){
         auth = FirebaseAuth.getInstance();
 
         // получаем доступ к корневой папке БД
@@ -70,11 +68,11 @@ public class ChatModel {
         storageReference = firebaseStorage.getReference().child("chat_images");
     }
 
-    public String getCurrentUserId(initCallBack init){
+    public String getCurrentUserId(){
         return auth.getCurrentUser().getUid();
     }
 
-    public void pushDBFireBase(initCallBack init , AwesomeMessage message){
+    public void pushDBFireBase(AwesomeMessage message){
         messagesDatabaseReference.push().setValue(message);
     }
 
@@ -114,14 +112,10 @@ public class ChatModel {
                     Uri downloadUri = task.getResult();
                     AwesomeMessage awesomeMessage = new AwesomeMessage();
                     awesomeMessage.setImageUrl(downloadUri.toString());
+                    awesomeMessage.setIsImage(false);
                     awesomeMessage.setName(dataMessage.getUserName());
                     awesomeMessage.setText(dataMessage.getTextMessage());
-                    awesomeMessage.setSender(getCurrentUserId(new initCallBack() {
-                        @Override
-                        public void init() {
-
-                        }
-                    }));
+                    awesomeMessage.setSender(getCurrentUserId());
                     awesomeMessage.setRecipient(dataMessage.getRecipientId());
                     // отправляем в DB
                     messagesDatabaseReference.push().setValue(awesomeMessage);

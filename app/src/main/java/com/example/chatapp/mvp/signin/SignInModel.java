@@ -25,7 +25,7 @@ public class SignInModel {
         presenter = new SignInPresenter(this);
     }
 
-    interface initCallBack{
+    interface initStartIntent{
         void init();
     }
 
@@ -37,7 +37,7 @@ public class SignInModel {
         void setToast();
     }
 
-    public void initDB(initCallBack init){
+    public void initDB(){
         firebaseAuth = FirebaseAuth.getInstance();// get instance db
         database = FirebaseDatabase.getInstance();
         usersDatabaseReference = database.getReference().child("users");
@@ -85,11 +85,13 @@ public class SignInModel {
         usersDatabaseReference.push().setValue(user);
     }
 
-    public void checkCurrentUser(initCallBack init){
+    public void checkCurrentUser(initStartIntent init){
         // метод для уже залогининных пользователей отправляет в MainActivity
         // получаем текущего пользователя
         if (firebaseAuth.getCurrentUser() != null) {
             init.init();
         }
     }
+
+
 }

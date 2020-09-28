@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapp.R;
-import com.example.chatapp.activity.ChatActivity;
 import com.example.chatapp.adapter.UserAdapter;
 import com.example.chatapp.common.User;
 import com.example.chatapp.mvp.chat.ChatView;
@@ -119,7 +118,7 @@ public class UserListView extends AppCompatActivity {
     }
 
     private void goToChat(int position) {
-        Intent intent = new Intent(UserListView.this , ChatActivity.class);
+        Intent intent = new Intent(UserListView.this , ChatView.class);
         intent.putExtra(RECIPIENT_USER_ID,userArrayList.get(position).getId());
         intent.putExtra(RECIPIENT_USER_NAME,userArrayList.get(position).getName());
         intent.putExtra(NICKNAME , userName);

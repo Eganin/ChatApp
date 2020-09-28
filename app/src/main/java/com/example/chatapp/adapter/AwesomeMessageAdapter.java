@@ -55,7 +55,7 @@ public class AwesomeMessageAdapter extends ArrayAdapter<AwesomeMessage> {
         }
 
         viewHolder.textViewMessage.setText(message.getText());
-        if (message.getImageUrl() != null) {
+        if (message.getImageUrl() != null && message.getIsImage()) {
             downloadImage(message, viewHolder);
         }
         return view;

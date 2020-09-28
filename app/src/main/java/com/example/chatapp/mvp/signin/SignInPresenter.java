@@ -29,13 +29,14 @@ public class SignInPresenter {
         view = null;
     }
 
-    public void initDB() {
-        model.initDB(new SignInModel.initCallBack() {
-            @Override
-            public void init() {
-
-            }
-        });
+    public void initDB(SignInView signInView) {
+        model.initDB();
+        /*
+        attachView используется чтобы заполнить переменную view т.к при
+        выходе из этого класса и использовании методов из SignInModel
+        при возвращении в этот класс view = null
+         */
+        attachView(signInView);
 
     }
 
@@ -149,7 +150,7 @@ public class SignInPresenter {
     }
 
     public void checkCurrentUser() {
-        model.checkCurrentUser(new SignInModel.initCallBack() {
+        model.checkCurrentUser(new SignInModel.initStartIntent() {
             @Override
             public void init() {
                 startIntent();

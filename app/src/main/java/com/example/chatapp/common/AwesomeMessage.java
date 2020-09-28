@@ -8,9 +8,10 @@ public class AwesomeMessage {
     private String recipient;
     private String imageUrl;
     private boolean isMineMessage;
+    private boolean isImage;
 
     public AwesomeMessage(String text, String name, String imageUrl,String sender,String recipient,
-                          boolean isMineMessage) {
+                          boolean isMineMessage,boolean isImage) {
         this.text = text;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -65,5 +66,13 @@ public class AwesomeMessage {
 
     public void setMineMessage(boolean mineMessage) {
         isMineMessage = mineMessage;
+    }
+
+    public boolean getIsImage() {
+        return isImage;
+    }
+
+    public void setIsImage(boolean isImage) {
+        this.isImage = isImage;
     }
 }

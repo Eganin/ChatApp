@@ -1,11 +1,11 @@
 package com.example.chatapp.mvp.chat;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -61,7 +61,7 @@ public class ChatView extends AppCompatActivity {
         getDataFromUserListActivity();
         handlerEditText();
         handlerButtonSendMessage();
-        handlerImageButtonSendPhoto();
+        //handlerImageButtonSendPhoto();
         handlerMessagesChildEventListener();
         handlerUsersChildEventListener();
     }
@@ -104,7 +104,7 @@ public class ChatView extends AppCompatActivity {
     }
 
     private void initDB(){
-        presenter.initDB();
+        presenter.initDB(this);
     }
 
     private void findView() {
@@ -153,8 +153,8 @@ public class ChatView extends AppCompatActivity {
             recipientUserId =intent.getStringExtra(RECIPIENT_USER_ID);
             recipientUserName = intent.getStringExtra(RECIPIENT_USER_NAME);
             userName = intent.getStringExtra(NICKNAME);
+            setTitle(recipientUserName);
         }
-        setTitle(recipientUserName);
     }
 
     private void handlerEditText() {
@@ -189,7 +189,7 @@ public class ChatView extends AppCompatActivity {
         buttonSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.sendMessage(getDataFromMessage());
+                presenter.sendMessage(getDataFromMessage(), ChatView.this);
             }
         });
     }
@@ -205,7 +205,7 @@ public class ChatView extends AppCompatActivity {
     }
 
     private void handlerMessagesChildEventListener(){
-        presenter.listenerMessages();
+        presenter.listenerMessages(this);
     }
 
     private void handlerUsersChildEventListener(){

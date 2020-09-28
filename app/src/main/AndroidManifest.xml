@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".mvp.userlist.UserListView"></activity>
-        <activity android:name=".mvp.chat.ChatView" />
+        <activity android:name=".mvp.chat.ChatView"></activity>
         <activity android:name=".mvp.signin.SignInView">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

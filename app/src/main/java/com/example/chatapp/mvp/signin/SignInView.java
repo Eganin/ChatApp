@@ -58,19 +58,20 @@ public class SignInView extends AppCompatActivity {
         presenter.detachView();
     }
 
-    private void checkCurrentUser() {
-        presenter.checkCurrentUser();
-    }
-
-
     private void initPresenter(){
         SignInModel signInModel = new SignInModel();
         presenter = new SignInPresenter(signInModel);
         presenter.attachView(SignInView.this);
     }
 
+    private void checkCurrentUser() {
+        presenter.checkCurrentUser();
+    }
+
+
+
     private void initDB(){
-        presenter.initDB();
+        presenter.initDB(SignInView.this);
     }
 
     private void findView() {
