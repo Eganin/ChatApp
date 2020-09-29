@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,7 +22,6 @@ import com.example.chatapp.adapter.AwesomeMessageAdapter;
 import com.example.chatapp.common.AwesomeMessage;
 import com.example.chatapp.common.DataMessage;
 import com.example.chatapp.mvp.signin.SignInView;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +59,7 @@ public class ChatView extends AppCompatActivity {
         getDataFromUserListActivity();
         handlerEditText();
         handlerButtonSendMessage();
-        //handlerImageButtonSendPhoto();
+        handlerImageButtonSendPhoto();
         handlerMessagesChildEventListener();
         handlerUsersChildEventListener();
     }
@@ -81,7 +79,7 @@ public class ChatView extends AppCompatActivity {
         switch (id){
             case R.id.sign_out:
                 // разлогиниваемся в FireBase
-                FirebaseAuth.getInstance().signOut();
+                presenter.signOut(ChatView.this);
                 startActivity(new Intent(ChatView.this , SignInView.class));
                 return true;
 
@@ -99,12 +97,12 @@ public class ChatView extends AppCompatActivity {
     private void initPresenter() {
         ChatModel chatModel = new ChatModel();
         presenter = new ChatPresenter(chatModel);
-        presenter.attachView(this);
+        presenter.attachView(ChatView.this);
 
     }
 
     private void initDB(){
-        presenter.initDB(this);
+        presenter.initDB(ChatView.this);
     }
 
     private void findView() {
@@ -196,10 +194,8 @@ public class ChatView extends AppCompatActivity {
 
     public DataMessage getDataFromMessage(){
         String textMessage = editTextMessage.getText().toString();
-        String userName = this.userName;
-        String recipientId = this.recipientUserId;
 
-        DataMessage dataMessage = new DataMessage(textMessage,userName,recipientId);
+        DataMessage dataMessage = new DataMessage(textMessage,this.userName,this.recipientUserId);
 
         return dataMessage;
     }

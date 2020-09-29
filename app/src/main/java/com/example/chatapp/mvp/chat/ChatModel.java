@@ -112,7 +112,7 @@ public class ChatModel {
                     Uri downloadUri = task.getResult();
                     AwesomeMessage awesomeMessage = new AwesomeMessage();
                     awesomeMessage.setImageUrl(downloadUri.toString());
-                    awesomeMessage.setIsImage(false);
+                    awesomeMessage.setIsImage(true);
                     awesomeMessage.setName(dataMessage.getUserName());
                     awesomeMessage.setText(dataMessage.getTextMessage());
                     awesomeMessage.setSender(getCurrentUserId());
@@ -230,5 +230,9 @@ public class ChatModel {
         };
 
         usersDatabaseReference.addChildEventListener(usersChildEventListener);
+    }
+
+    public void signOutDB(){
+        FirebaseAuth.getInstance().signOut();
     }
 }

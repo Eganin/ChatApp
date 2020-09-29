@@ -91,4 +91,9 @@ public class ChatPresenter {
             }
         });
     }
+
+    public void signOut(ChatView chatView){
+        model.signOutDB();
+        attachView(chatView);
+    }
 }
