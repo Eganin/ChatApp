@@ -7,4 +7,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CustomizeEditText">
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_toRightOf">@id/frame</item>
+        <item name="android:layout_marginTop">12dp</item>
+    </style>
+
 </resources>

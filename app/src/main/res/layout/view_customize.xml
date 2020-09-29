@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/frame"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="40dp">
+        <ImageView
+            android:id="@+id/imageViewAvatar"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+
+            android:background="@drawable/circle_background_image_avatar"/>
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_baseline_loop_24"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
+
+
+    <EditText
+        android:id="@+id/editTextCustomizeNickName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="10dp"
+        android:layout_toRightOf="@id/frame"
+        android:hint="Name" />
+
+    <EditText
+        android:id="@+id/editTExtCustomizeEmail"
+        style="@style/CustomizeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextCustomizeNickName"
+        android:hint="Email" />
+
+    <EditText
+        android:id="@+id/editTExtCustomizePassword"
+        style="@style/CustomizeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTExtCustomizeEmail"
+        android:hint="Password" />
+
+    <TextView
+        android:id="@+id/textViewUserInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTExtCustomizePassword"
+        android:text="Расскажите о себе:"
+        android:textSize="30sp"
+        android:layout_marginLeft="40dp"/>
+
+
+
+    <EditText
+        android:id="@+id/editTextUserInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="Информация о себе"
+        android:layout_below="@id/textViewUserInfo"
+        android:scrollbars="vertical"
+        android:layout_marginBottom="70dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="70dp"/>
+
+    <Button
+        android:id="@+id/buttonSubmitCustomize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="Сохранить"/>
+
+</RelativeLayout>
