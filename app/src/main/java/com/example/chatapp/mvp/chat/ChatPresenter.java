@@ -5,6 +5,7 @@ import android.net.Uri;
 
 import com.example.chatapp.common.AwesomeMessage;
 import com.example.chatapp.common.DataMessage;
+import com.example.chatapp.mvp.menu.customize.CustomizeView;
 
 import static com.example.chatapp.contacts.ContactException.Text.TEXT_INTENT_IMAGE;
 import static com.example.chatapp.contacts.ContactException.Types.MIME_TYPE_IMAGES;
@@ -13,15 +14,18 @@ import static com.example.chatapp.contacts.ContactException.Types.RC_IMAGE_PICKE
 public class ChatPresenter {
 
     private ChatView view;
-    private final ChatModel model;
+    private CustomizeView customizeView;
+    private  ChatModel model;
 
     public ChatPresenter(ChatModel model){
         this.model=model;
     }
 
+
     public void attachView(ChatView view){
         this.view=view;
     }
+
 
     public void detachView() {
         this.view = null;
