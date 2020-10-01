@@ -27,11 +27,13 @@ public class CustomizeView extends AppCompatActivity {
     private EditText editTextCustomizeEmail;
     private EditText editTextUserInfo;
     private EditText editTextCustomizeRepeatPassword;
+    private EditText editTextCustomizeLastNickName;
     private Button buttonSubmitCustomize;
     private CustomizePresenter presenter;
 
     private String password;
     private String repeatPassword;
+    private String lastName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +97,7 @@ public class CustomizeView extends AppCompatActivity {
         editTextCustomizePassword = findViewById(R.id.editTextCustomizePassword);
         editTextCustomizeRepeatPassword = findViewById(R.id.editTextCustomizeRepeatPassword);
         editTextUserInfo = findViewById(R.id.editTextUserInfo);
+        editTextCustomizeLastNickName = findViewById(R.id.editTextCustomizeLastNickName);
         buttonSubmitCustomize = findViewById(R.id.buttonSubmitCustomize);
     }
 
@@ -109,6 +112,7 @@ public class CustomizeView extends AppCompatActivity {
         String email = editTextCustomizeEmail.getText().toString();
         password = editTextCustomizePassword.getText().toString();
         repeatPassword = editTextCustomizeRepeatPassword.getText().toString();
+        lastName = editTextCustomizeLastNickName.getText().toString();
         String textUserInfo = editTextUserInfo.getText().toString();
         String nickName = editTextCustomizeNickName.getText().toString();
         User user = new User(nickName,email,id,String.valueOf(uriImage),textUserInfo);
@@ -120,7 +124,8 @@ public class CustomizeView extends AppCompatActivity {
         buttonSubmitCustomize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.deleteUserAndCreateUser(getDataFromNewUser(),password, repeatPassword);
+                presenter.deleteUserAndCreateUser(getDataFromNewUser(),password, repeatPassword,
+                        lastName);
             }
         });
     }

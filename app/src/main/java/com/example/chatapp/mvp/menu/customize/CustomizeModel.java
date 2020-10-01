@@ -9,10 +9,7 @@ import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.example.chatapp.common.NewUserData;
 import com.example.chatapp.common.User;
-import com.example.chatapp.mvp.signin.SignInModel;
-import com.example.chatapp.mvp.signin.SignInPresenter;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -53,6 +51,10 @@ public class CustomizeModel {
 
     public interface init {
         void inits();
+    }
+
+    public interface startUserListView{
+        void start();
     }
 
     public void initDB() {
@@ -160,19 +162,15 @@ public class CustomizeModel {
         return uid;
     }
 
-    public void deleteUserInDB() {
-        usersDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+    public void deleteUserInDB(String lastName) {
+
+        Query query = usersDatabaseReference.orderByChild("name").equalTo(lastName);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    String keyDelete = ds.getKey();
-                    // тут читаешь в свой класс значение
-                    User item = ds.getValue(User.class);
-                    if(item.getName() == "Eganin"){
-                        usersDatabaseReference.child("items").child(keyDelete).removeValue();
-                        break;
-                    }
-                    break;
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
+                    appleSnapshot.getRef().removeValue();
                 }
             }
 
@@ -183,7 +181,7 @@ public class CustomizeModel {
         });
     }
 
-    public void createUser(final User user, String password, CustomizeView view) {
+    public void createUser(final startUserListView startUserListView, final User user, String password, CustomizeView view) {
         String email = user.getEmail();
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(view, new OnCompleteListener<AuthResult>() {
             @Override
@@ -193,11 +191,10 @@ public class CustomizeModel {
                     FirebaseUser userFireBase = firebaseAuth.getCurrentUser();// получение текущего пользователя
                     user.setId(userFireBase.getUid());
                     user.setEmail(userFireBase.getEmail());
-                    try {
-                        usersDatabaseReference.push().setValue(user);
-                    }catch (Exception e){
-                        e.printStackTrace();
+                    usersDatabaseReference.push().setValue(user);
 
+                    if (startUserListView != null){
+                        startUserListView.start();
                     }
 
                 } else {

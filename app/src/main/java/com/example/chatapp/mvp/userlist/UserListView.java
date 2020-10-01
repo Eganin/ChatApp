@@ -40,13 +40,13 @@ public class UserListView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_user_list);
-
         getDataFromSignInActivity();
         initPresenter();
         initDB();
         initRecyclerView();
         implementsInterfaceFromUserAdapter();
         attachUserDatabaseReferenceListener();
+        userAdapter.notifyDataSetChanged();
     }
 
     @Override

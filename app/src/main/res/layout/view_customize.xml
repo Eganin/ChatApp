@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/editTextCustomizeLastNickName"
-        android:hint="Email" />
+        android:hint=" New Email" />
 
     <EditText
         android:id="@+id/editTextCustomizeRepeatPassword"

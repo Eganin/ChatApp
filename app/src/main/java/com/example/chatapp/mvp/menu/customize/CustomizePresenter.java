@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.chatapp.common.NewUserData;
 import com.example.chatapp.common.User;
+import com.example.chatapp.mvp.userlist.UserListView;
 
 import java.io.ByteArrayOutputStream;
 import java.util.UUID;
@@ -94,11 +95,18 @@ public class CustomizePresenter {
         return Uri.parse(path);
     }
 
-    public void deleteUserAndCreateUser(User user,String password , String repeatPassword) {
-        model.deleteUserInDB();
+    public void deleteUserAndCreateUser(User user,String password , String repeatPassword,
+                                        String lastName) {
+        model.deleteUserInDB(lastName);
         model.deleteUser(repeatPassword);
         attachView(view);
-        model.createUser(user , password , view);
+        model.createUser(new CustomizeModel.startUserListView() {
+            @Override
+            public void start() {
+                view.viewToast();
+                view.startActivity(new Intent(view , UserListView.class));
+            }
+        }, user, password, view);
     }
 
     public String getCurrentId(){
@@ -107,8 +115,4 @@ public class CustomizePresenter {
         return UID;
     }
 
-    public void viewToastInView(){
-        attachView(view);
-        view.viewToast();
-    }
 }
