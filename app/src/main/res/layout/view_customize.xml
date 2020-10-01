@@ -25,39 +25,65 @@
     </FrameLayout>
 
 
-
     <EditText
         android:id="@+id/editTextCustomizeNickName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_toRightOf="@id/frame"
-        android:hint="Name" />
+        android:hint="New Name" />
+
 
     <EditText
-        android:id="@+id/editTExtCustomizeEmail"
-        style="@style/CustomizeEditText"
+
+        android:id="@+id/editTextCustomizeLastNickName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/editTextCustomizeNickName"
-        android:hint="Email" />
+        android:layout_marginLeft="0dp"
+
+        android:layout_marginTop="19dp"
+        android:layout_marginRight="10dp"
+        android:layout_toRightOf="@id/frame"
+        android:hint="Last Name" />
 
     <EditText
-        android:id="@+id/editTExtCustomizePassword"
+        android:id="@+id/editTextCustomizeEmail"
         style="@style/CustomizeEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTExtCustomizeEmail"
-        android:hint="Password" />
+        android:layout_below="@id/editTextCustomizeLastNickName"
+        android:hint="Email" />
+
+    <EditText
+        android:id="@+id/editTextCustomizeRepeatPassword"
+        android:inputType="textPassword"
+        style="@style/CustomizeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextCustomizeEmail"
+        android:hint="Last password" />
+
+    <EditText
+        android:id="@+id/editTextCustomizePassword"
+        android:inputType="textPassword"
+        style="@style/CustomizeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextCustomizeRepeatPassword"
+
+        android:hint="New password" />
 
     <TextView
         android:id="@+id/textViewUserInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTExtCustomizePassword"
+        android:layout_below="@id/editTextCustomizePassword"
         android:text="Расскажите о себе:"
         android:textSize="30sp"
+        android:layout_marginTop="30dp"
         android:layout_marginLeft="40dp"/>
 
 
@@ -68,10 +94,11 @@
         android:layout_height="match_parent"
         android:hint="Информация о себе"
         android:layout_below="@id/textViewUserInfo"
+        android:layout_above="@id/buttonSubmitCustomize"
         android:scrollbars="vertical"
-        android:layout_marginBottom="70dp"
+
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="70dp"/>
+        android:layout_marginRight="70dp" />
 
     <Button
         android:id="@+id/buttonSubmitCustomize"

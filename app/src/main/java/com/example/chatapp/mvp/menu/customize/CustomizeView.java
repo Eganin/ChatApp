@@ -1,33 +1,20 @@
 package com.example.chatapp.mvp.menu.customize;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Shader;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.example.chatapp.R;
-import com.example.chatapp.common.NewUserData;
+import com.example.chatapp.common.User;
 import com.pkmmte.view.CircularImageView;
-
-import java.io.ByteArrayOutputStream;
-import java.util.UUID;
 
 import static com.example.chatapp.contacts.ContactException.Types.RC_IMAGE_PICKER;
 
@@ -39,8 +26,12 @@ public class CustomizeView extends AppCompatActivity {
     private EditText editTextCustomizePassword;
     private EditText editTextCustomizeEmail;
     private EditText editTextUserInfo;
+    private EditText editTextCustomizeRepeatPassword;
     private Button buttonSubmitCustomize;
     private CustomizePresenter presenter;
+
+    private String password;
+    private String repeatPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +71,6 @@ public class CustomizeView extends AppCompatActivity {
 
                     }
                 });
-            } else {
-                System.out.println("AAAAAAAAAAAAAAAAAAA ");
             }
         }
     }
@@ -101,9 +90,10 @@ public class CustomizeView extends AppCompatActivity {
     private void findFields() {
         circularImageView = findViewById(R.id.imageViewAvatar);
         imageViewNotImage = findViewById(R.id.imageViewNotImage);
-        editTextCustomizeEmail = findViewById(R.id.editTExtCustomizeEmail);
+        editTextCustomizeEmail = findViewById(R.id.editTextCustomizeEmail);
         editTextCustomizeNickName = findViewById(R.id.editTextCustomizeNickName);
-        editTextCustomizePassword = findViewById(R.id.editTExtCustomizePassword);
+        editTextCustomizePassword = findViewById(R.id.editTextCustomizePassword);
+        editTextCustomizeRepeatPassword = findViewById(R.id.editTextCustomizeRepeatPassword);
         editTextUserInfo = findViewById(R.id.editTextUserInfo);
         buttonSubmitCustomize = findViewById(R.id.buttonSubmitCustomize);
     }
@@ -113,22 +103,24 @@ public class CustomizeView extends AppCompatActivity {
     }
 
 
-    private NewUserData getDataFromNewUser() {
+    private User getDataFromNewUser() {
+        String id = presenter.getCurrentId();
+        Uri uriImage = presenter.getUriImage(CustomizeModel.bitmap);
         String email = editTextCustomizeEmail.getText().toString();
-        String password = editTextCustomizePassword.getText().toString();
+        password = editTextCustomizePassword.getText().toString();
+        repeatPassword = editTextCustomizeRepeatPassword.getText().toString();
         String textUserInfo = editTextUserInfo.getText().toString();
         String nickName = editTextCustomizeNickName.getText().toString();
-        NewUserData newUserData = new NewUserData(null, email, password, textUserInfo,
-                nickName);
+        User user = new User(nickName,email,id,String.valueOf(uriImage),textUserInfo);
 
-        return newUserData;
+        return user;
     }
 
     private void handlerButton() {
         buttonSubmitCustomize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.deleteUser(getDataFromNewUser());
+                presenter.deleteUserAndCreateUser(getDataFromNewUser(),password, repeatPassword);
             }
         });
     }
@@ -142,33 +134,13 @@ public class CustomizeView extends AppCompatActivity {
     }
 
     public void permission(CustomizeModel.init init) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            /*
-            если нет нужного разрешения у приложения
-            то запрашиваем  у пользователя разрешение на совершение звонков
-             */
-            int currentAPIVersion = Build.VERSION.SDK_INT;
-            if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            }
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]
-                    {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-        }
-        System.out.println(getImageUri(getApplicationContext(), CustomizeModel.bitmap)+"---------------------------");
+        presenter.checkPermission(init);
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(CustomizeView.this.getContentResolver(),
-                inImage, UUID.randomUUID().toString() + ".png", "drawing");
-        //MediaStore.Images.Media.getBitmap(inContext.getContentResolver() ,);
-        return Uri.parse(path);
-
+    public void viewToast(){
+        Toast.makeText(CustomizeView.this, "User deleted", Toast.LENGTH_LONG).show();
     }
+
 
 
 }

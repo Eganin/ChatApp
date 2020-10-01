@@ -50,6 +50,7 @@ public class UserAdapter
     @Override
     public void onBindViewHolder(@NonNull UserAdapter.UserViewHolder holder, int position) {
         User currentUser = userArrayList.get(position);
+        System.out.println(currentUser.getAvatarUri()+"----------------------------------------------------");
         holder.imageViewAvatarUser.setImageResource(currentUser.getAvatarMockUpResource());
         holder.textViewUserName.setText(currentUser.getName());
     }

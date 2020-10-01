@@ -1,21 +1,37 @@
 package com.example.chatapp.common;
 
-public class User {
+import android.net.Uri;
 
-    private String name;
-    private String email;
-    private String id;
-    private int avatarMockUpResource;
+import java.io.Serializable;
+
+public class User implements Serializable {
+
+    private String name = "";
+    private String email = "";
+    private String id= "";
+    private String textUserInfo = "";
+    private int avatarMockUpResource = 0;
+    private String avatarUri = "";
 
     public User() {
 
     }
 
-    public User(String name, String email, String id , int avatarMockUpResource) {
+    public User(String name, String email, String id , String avatarUri , String textUserInfo) {
         this.name = name;
         this.email = email;
         this.id = id;
-        this.avatarMockUpResource=avatarMockUpResource;
+        this.avatarUri=avatarUri;
+        this.textUserInfo=textUserInfo;
+    }
+
+
+    public String getTextUserInfo() {
+        return textUserInfo;
+    }
+
+    public void setTextUserInfo(String textUserInfo) {
+        this.textUserInfo = textUserInfo;
     }
 
     public String getEmail() {
@@ -48,5 +64,13 @@ public class User {
 
     public void setAvatarMockUpResource(int avatarMockUpResource) {
         this.avatarMockUpResource = avatarMockUpResource;
+    }
+
+    public String getAvatarUri() {
+        return avatarUri;
+    }
+
+    public void setAvatarUri(String avatarUri) {
+        this.avatarUri = avatarUri;
     }
 }
