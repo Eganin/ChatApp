@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatapp.R;
 import com.example.chatapp.common.User;
+import com.example.chatapp.mvp.userlist.UserListModel;
+import com.example.chatapp.mvp.userlist.UserListView;
 
 import java.util.ArrayList;
 
@@ -19,19 +21,18 @@ public class UserAdapter
 
     private ArrayList<User> userArrayList;
     private OnUserClickListener listener;
+    private UserListView view;
 
     // оставляем interface для того чтобы потом его реализовать в UserListActivity
     public interface OnUserClickListener {
         void onUserClick(int position);
     }
 
-    public UserAdapter(ArrayList<User> userArrayList) {
+    public UserAdapter(ArrayList<User> userArrayList , UserListView view) {
         this.userArrayList = userArrayList;
+        this.view=view;
     }
 
-    public UserAdapter() {
-
-    }
 
     public void setOnClickListener(OnUserClickListener listener){
         this.listener=listener;
@@ -50,7 +51,7 @@ public class UserAdapter
     @Override
     public void onBindViewHolder(@NonNull UserAdapter.UserViewHolder holder, int position) {
         User currentUser = userArrayList.get(position);
-        System.out.println(currentUser.getAvatarUri()+"----------------------------------------------------");
+        setAvatarUser(currentUser.getAvatarUri() , holder);
         holder.imageViewAvatarUser.setImageResource(currentUser.getAvatarMockUpResource());
         holder.textViewUserName.setText(currentUser.getName());
     }
@@ -84,4 +85,21 @@ public class UserAdapter
             });
         }
     }
+
+    private void setAvatarUser(String imageUri,UserAdapter.UserViewHolder holder){
+        if(!imageUri.equals("")){
+            String[] splitUri = imageUri.split("/");
+            String nameImage = splitUri[splitUri.length-1];
+            downloadImage(nameImage , holder);
+        }
+    }
+
+    private void downloadImage(String nameImage ,UserAdapter.UserViewHolder holder){
+        UserListModel model = new UserListModel();
+        model.setHolder(holder);
+        model.setView(view);
+        model.downloadImage(nameImage);
+    }
+
+
 }

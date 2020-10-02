@@ -37,6 +37,7 @@ public class CustomizeModel {
     private DatabaseReference usersDatabaseReference;
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
+    private StorageReference avatarStorageReference;
     private CustomizePresenter presenter;
 
     public static Bitmap bitmap;
@@ -57,6 +58,10 @@ public class CustomizeModel {
         void start();
     }
 
+    public interface uploadData{
+        void upload(Uri resultUpload);
+    }
+
     public void initDB() {
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -64,6 +69,7 @@ public class CustomizeModel {
         usersDatabaseReference = database.getReference().child("users");
         // ссылаемся на папку которая создана в storage firebase
         storageReference = firebaseStorage.getReference().child("avatar_images");
+        avatarStorageReference = firebaseStorage.getReference().child("avatar_user_list");
     }
 
     public void getReferenceFromImage(setImage setImage, Uri imageUri, CustomizeView view) {
@@ -181,9 +187,11 @@ public class CustomizeModel {
         });
     }
 
-    public void createUser(final startUserListView startUserListView, final User user, String password, CustomizeView view) {
+    public void createUser(final startUserListView startUserListView, final User user,
+                           String password, CustomizeView view) {
         String email = user.getEmail();
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(view, new OnCompleteListener<AuthResult>() {
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(view
+                , new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
@@ -203,5 +211,45 @@ public class CustomizeModel {
             }
         });
     }
+
+    public void uploadImageFromUser(uploadData uploadData , String avatar){
+        Uri avatarUri = Uri.parse(avatar);
+        StorageReference imageReference = avatarStorageReference
+                .child(avatarUri.getLastPathSegment());
+
+        uploadImage(uploadData,imageReference, avatarUri);
+    }
+
+    private void uploadImage(final uploadData uploadData,final StorageReference imageReference, Uri imageUri) {
+        // загружаем локальный файл-изображение в firebase storage
+
+        // загружаем файл
+        UploadTask uploadTask = imageReference.putFile(imageUri);
+
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot,
+                Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    // если не получилось занрузить файл
+                    throw task.getException();
+                }
+
+                return imageReference.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    if(uploadData != null){
+                        uploadData.upload(task.getResult());
+                    }
+                } else {
+
+                }
+            }
+        });
+    }
+
 
 }

@@ -110,6 +110,7 @@ public class ChatModel {
                 if (task.isSuccessful()) {
                     // получаем ссылку изображения котрое потом скачаем с помощью Glide
                     Uri downloadUri = task.getResult();
+                    System.out.println(downloadUri+"-------------------------------");
                     AwesomeMessage awesomeMessage = new AwesomeMessage();
                     awesomeMessage.setImageUrl(downloadUri.toString());
                     awesomeMessage.setIsImage(true);

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.UserListActivity"
+    tools:context=".mvp.userlist.UserListView"
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -13,4 +13,5 @@
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 </LinearLayout>

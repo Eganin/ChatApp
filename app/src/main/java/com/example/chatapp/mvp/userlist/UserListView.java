@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -27,8 +28,9 @@ import static com.example.chatapp.contacts.ContactException.IntentKeys.RECIPIENT
 
 public class UserListView extends AppCompatActivity {
 
+
     private ArrayList<User> userArrayList;
-    private RecyclerView recyclerView;
+    public RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
@@ -108,8 +110,8 @@ public class UserListView extends AppCompatActivity {
     private void initRecyclerView() {
         recyclerView = findViewById(R.id.recyclerViewUserList);
         userArrayList = new ArrayList<User>();
-        userAdapter = new UserAdapter(userArrayList);
-        layoutManager = new LinearLayoutManager(this);
+        userAdapter = new UserAdapter(userArrayList,UserListView.this);
+        layoutManager = new LinearLayoutManager(UserListView.this);
 
         // добавляем програмно в низу user_item.xml черту
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),

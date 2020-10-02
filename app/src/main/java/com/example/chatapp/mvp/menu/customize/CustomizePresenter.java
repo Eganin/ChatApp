@@ -2,16 +2,14 @@ package com.example.chatapp.mvp.menu.customize;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.Contacts;
 import android.provider.MediaStore;
 
 import androidx.core.app.ActivityCompat;
-
-import com.example.chatapp.common.NewUserData;
 import com.example.chatapp.common.User;
 import com.example.chatapp.mvp.userlist.UserListView;
 
@@ -21,7 +19,6 @@ import java.util.UUID;
 import static com.example.chatapp.contacts.ContactException.Text.TEXT_INTENT_IMAGE;
 import static com.example.chatapp.contacts.ContactException.Types.MIME_TYPE_IMAGES;
 import static com.example.chatapp.contacts.ContactException.Types.RC_IMAGE_PICKER;
-import static com.example.chatapp.mvp.menu.customize.CustomizeModel.bitmap;
 
 public class CustomizePresenter {
 
@@ -64,14 +61,14 @@ public class CustomizePresenter {
 
                                         }
                                     }, selectedImage,
-                                        this.view);
+                this.view);
     }
 
-    public void checkPermission(CustomizeModel.init init){
+    public void checkPermission(CustomizeModel.init init) {
         if (ActivityCompat.checkSelfPermission(view, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(view, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+                        != PackageManager.PERMISSION_GRANTED) {
                 /*
             если нет нужного разрешения у приложения
             то запрашиваем  у пользователя разрешение на совершение звонков
@@ -83,7 +80,7 @@ public class CustomizePresenter {
         }
     }
 
-    public Uri getUriImage(Bitmap inImage){
+    public Uri getUriImage(Bitmap inImage) {
         /*
         Метод отвечает за получение Uri у
         изображения скачаного с помощью Glide
@@ -95,22 +92,31 @@ public class CustomizePresenter {
         return Uri.parse(path);
     }
 
-    public void deleteUserAndCreateUser(User user,String password , String repeatPassword,
-                                        String lastName) {
-        model.deleteUserInDB(lastName);
-        model.deleteUser(repeatPassword);
-        attachView(view);
-        model.createUser(new CustomizeModel.startUserListView() {
+    public void deleteUserAndCreateUser(final User user, final String password, final String repeatPassword,
+                                        final String lastName) {
+        model.uploadImageFromUser(new CustomizeModel.uploadData() {
             @Override
-            public void start() {
-                view.viewToast();
-                view.startActivity(new Intent(view , UserListView.class));
+            public void upload(Uri resultUpload) {
+                model.deleteUserInDB(lastName);
+                model.deleteUser(repeatPassword);
+                attachView(view);
+                model.createUser(new CustomizeModel.startUserListView() {
+                    @Override
+                    public void start() {
+                        view.viewToast();
+                        view.startActivity(new Intent(view, UserListView.class));
+                    }
+                }, user, password, view);
             }
-        }, user, password, view);
+        }, user.getAvatarUri());
+
     }
 
-    public String getCurrentId(){
-        String UID =  model.getCurrentUIDId();
+    private void saveUriInSharedPrefernces(){
+    }
+
+    public String getCurrentId() {
+        String UID = model.getCurrentUIDId();
         attachView(view);
         return UID;
     }
