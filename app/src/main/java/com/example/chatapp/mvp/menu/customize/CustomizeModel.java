@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.chatapp.common.User;
+import com.example.chatapp.mvp.userlist.UserListModel;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -54,11 +55,11 @@ public class CustomizeModel {
         void inits();
     }
 
-    public interface startUserListView{
+    public interface startUserListView {
         void start();
     }
 
-    public interface uploadData{
+    public interface uploadData {
         void upload(Uri resultUpload);
     }
 
@@ -175,7 +176,7 @@ public class CustomizeModel {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
+                for (DataSnapshot appleSnapshot : snapshot.getChildren()) {
                     appleSnapshot.getRef().removeValue();
                 }
             }
@@ -192,35 +193,35 @@ public class CustomizeModel {
         String email = user.getEmail();
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(view
                 , new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    // добавление пользователя
-                    FirebaseUser userFireBase = firebaseAuth.getCurrentUser();// получение текущего пользователя
-                    user.setId(userFireBase.getUid());
-                    user.setEmail(userFireBase.getEmail());
-                    usersDatabaseReference.push().setValue(user);
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // добавление пользователя
+                            FirebaseUser userFireBase = firebaseAuth.getCurrentUser();// получение текущего пользователя
+                            user.setId(userFireBase.getUid());
+                            user.setEmail(userFireBase.getEmail());
+                            usersDatabaseReference.push().setValue(user);
 
-                    if (startUserListView != null){
-                        startUserListView.start();
+                            if (startUserListView != null) {
+                                startUserListView.start();
+                            }
+
+                        } else {
+
+                        }
                     }
-
-                } else {
-
-                }
-            }
-        });
+                });
     }
 
-    public void uploadImageFromUser(uploadData uploadData , String avatar){
+    public void uploadImageFromUser(uploadData uploadData, String avatar, CustomizeView view) {
         Uri avatarUri = Uri.parse(avatar);
         StorageReference imageReference = avatarStorageReference
                 .child(avatarUri.getLastPathSegment());
 
-        uploadImage(uploadData,imageReference, avatarUri);
+        uploadImage(uploadData, imageReference, avatarUri, view);
     }
 
-    private void uploadImage(final uploadData uploadData,final StorageReference imageReference, Uri imageUri) {
+    private void uploadImage(final uploadData uploadData, final StorageReference imageReference, Uri imageUri, final CustomizeView view) {
         // загружаем локальный файл-изображение в firebase storage
 
         // загружаем файл
@@ -241,7 +242,7 @@ public class CustomizeModel {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
-                    if(uploadData != null){
+                    if (uploadData != null) {
                         uploadData.upload(task.getResult());
                     }
                 } else {

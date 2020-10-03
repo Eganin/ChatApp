@@ -8,14 +8,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.chatapp.R;
 import com.example.chatapp.adapter.UserAdapter;
 import com.example.chatapp.common.User;
-import com.example.chatapp.mvp.menu.customize.CustomizeModel;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -37,7 +32,6 @@ public class UserListModel {
     private StorageReference imagesStorage;
     private UserAdapter.UserViewHolder holder;
     private FirebaseAuth auth;
-
     private UserListView view;
 
     public void initDB(){
@@ -58,11 +52,11 @@ public class UserListModel {
         FirebaseAuth.getInstance().signOut();
     }
 
-    public void downloadImage(final String nameImage){
+
+    public void downloadImage(final String nameImage ){
         final ImageView imageView = holder.imageViewAvatarUser;
         initDB();
         String imageURL = imagesStorage.child(nameImage).getDownloadUrl().toString();
-        System.out.println(imageURL);
         Glide.with(view.recyclerView.getContext()).load(imageURL).into(imageView);
 
 

@@ -2,7 +2,6 @@ package com.example.chatapp.mvp.menu.customize;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -92,7 +91,8 @@ public class CustomizePresenter {
         return Uri.parse(path);
     }
 
-    public void deleteUserAndCreateUser(final User user, final String password, final String repeatPassword,
+    public void deleteUserAndCreateUser(final User user, final String password,
+                                        final String repeatPassword,
                                         final String lastName) {
         model.uploadImageFromUser(new CustomizeModel.uploadData() {
             @Override
@@ -108,11 +108,8 @@ public class CustomizePresenter {
                     }
                 }, user, password, view);
             }
-        }, user.getAvatarUri());
+        }, user.getAvatarUri(),view);
 
-    }
-
-    private void saveUriInSharedPrefernces(){
     }
 
     public String getCurrentId() {
